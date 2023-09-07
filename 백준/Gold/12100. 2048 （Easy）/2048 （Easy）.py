@@ -86,22 +86,22 @@ def right1(board):
 # 0  4
 # 2  2
 def up(board):
-    for i in range(N):
+    for j in range(N):
         ptr = 0
 
-        for j in range(1, N):
+        for i in range(1, N):
 
-            if board[j][i]:
+            if board[i][j]:
 
-                temp = board[j][i]
-                board[j][i] = 0
+                temp = board[i][j]
+                board[i][j] = 0
 
-                if board[ptr][i] == temp:
-                    board[ptr][i] *= 2
+                if board[ptr][j] == temp:
+                    board[ptr][j] *= 2
                     ptr += 1
 
-                elif board[ptr][i] == 0:
-                    board[ptr][i] = temp
+                elif board[ptr][j] == 0:
+                    board[ptr][j] = temp
 
                 else:
 
@@ -128,14 +128,13 @@ def down(board):
                     board[ptr][i] *= 2
                     ptr -= 1
 
-
                 elif board[ptr][i] == 0:
                     board[ptr][i] = temp
 
                 else:
 
                     ptr -= 1
-                    board[ptr][j] = temp
+                    board[ptr][i] = temp
 
 
     return board
@@ -203,7 +202,7 @@ def dfs(board,count):
 
         return maxNum
 
-    return max(dfs(up1(deepcopy(board)), count + 1), dfs(right1(deepcopy(board)), count + 1),
+    return max(dfs(up(deepcopy(board)), count + 1), dfs(right1(deepcopy(board)), count + 1),
                dfs(left1(deepcopy(board)), count + 1), dfs(down1(deepcopy(board)), count + 1))
 
 
