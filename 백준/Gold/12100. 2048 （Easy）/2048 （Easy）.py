@@ -171,7 +171,7 @@ def right(board):
     for i in range(N):
         ptr = N - 1
 
-        for j in range(1, N):
+        for j in range(N-2,-1,-1):
 
             if board[i][j]:
 
@@ -202,8 +202,8 @@ def dfs(board,count):
 
         return maxNum
 
-    return max(dfs(up(deepcopy(board)), count + 1), dfs(right1(deepcopy(board)), count + 1),
-               dfs(left1(deepcopy(board)), count + 1), dfs(down1(deepcopy(board)), count + 1))
+    return max(dfs(up(deepcopy(board)), count + 1), dfs(right(deepcopy(board)), count + 1),
+               dfs(left(deepcopy(board)), count + 1), dfs(down(deepcopy(board)), count + 1))
 
 
 print(dfs(board, 0))
