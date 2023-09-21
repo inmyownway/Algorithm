@@ -1,142 +1,97 @@
-# # 각 물고기는 번호와 방향을 가짐
-# # 번호 (1~16) , 방향은 8가지
-# # 0,0 물고기를 먹고 들어감
-#
-# board=[[0]*4 for _ in range(4)]
-# dir=[[0]*4 for _ in range(4)]
-#
-# for j in range(4):
-#     l=list(map(int,input().split()))
-#     idx=0
-#     for i in range(0,len(l),2):
-#         a,b=l[i],l[i+1]
-#
-#         board[j][idx]=a
-#         dir[j][idx]=b-1
-#         idx+=1
-#
-# sx,sy=0,0
-#
-# dx=[-1,-1,0,1,1,1,0,-1]
-# dy=[0,-1,-1,-1,0,1,1,1]
-#
-# def fish_move():
-#
-#     for i in range(1,17):
-#
-#         for x in range(4):
-#             for y in range(4):
-#                 if board[x][y]==i:
-#                     print(i,x,y,dir[x][y])
-#
-#                     d=dir[x][y]
-#
-#                     cnt=0
-#                     # 1 2 3 4 5 6 7 8
-#                     for j in range(d,d+8):
-#                         j=j%8
-#                         #print(nx,ny)
-#                         nx=x+dx[j]
-#                         ny=y+dy[j]
-#                         if 0<=nx<4 and 0<=ny<4:
-#                             print(nx,ny,j)
-#                             if board[nx][ny]!=-1:
-#                                 if board[nx][ny]==0:
-#                                     board[nx][ny]=i
-#                                     dir[nx][ny]=dir[x][y]
-#                                     #print(nx,ny,j)
-#                                     break
-#                                 elif board[nx][ny]>=1:
-#
-#                                     temp_num=board[nx][ny]
-#                                     temp_dir=dir[nx][ny]
-#
-#                                     board[nx][ny]=i
-#                                     dir[nx][ny]=j
-#
-#                                     board[x][y]=temp_num
-#                                     dir[x][y]=temp_dir
-#                                     #print(nx,ny,j)
-#                                     break
-#
-#                     # for i in board:
-#                     #     print(i)
-#                     # print()
-#                     #
-#                     # for i in dir:
-#                     #     print(i)
-#                     # print()
-#
-# def sharK_move():
-#     for x in range(4):
-#         for y in range(4):
-#             if board[x][y]==-1:
-#                 print()
-#
-#
-#
-#
-#
-#
-#
-
 import copy
 
-board = [[] for _ in range(4)]
-dx = [-1, -1, 0, 1, 1, 1, 0, -1]
-dy = [0, -1, -1, -1, 0, 1, 1, 1]
+dx=[-1,-1,0,1,1,1,0,-1]
+dy=[0,-1,-1,-1,0,1,1,1]
 
+
+board=[]
 for i in range(4):
-    data = list(map(int, input().split()))
-    fish = []
-    for j in range(4):
-        # 물고기 번호, 방향
-        fish.append([data[2*j], data[2*j+1]-1])
-    board[i] = fish
+    t=list(map(int,input().split()))
+    temp=[]
 
-max_score = 0
+    for j in range(0,8,2):
+        temp.append([t[j],t[j+1]-1])
+    board.append(temp)
+
+result=0
+
+def find_fish(idx, board):
+    for i in range(4):
+        for j in range(4):
+            if board[i][j][0] == idx:
+                return (i, j)
+    return None
 
 
+def move_fish(board,sx,sy):
 
-def dfs(sx, sy, score, board):
-    global max_score
+    for num in range(1,17):
 
-    score += board[sx][sy][0]
+        fish=find_fish(num,board)
 
-    max_score = max(score, max_score)
-    board[sx][sy][0] = 0
-    # fish move
-    for ff in range(1, 17):
-        f_x, f_y = -1, -1
-        for x in range(4):
-            for y in range(4):
-                if board[x][y][0] == ff:
-                    f_x, f_y = x, y
+        if fish !=None:
+
+            i,j=fish
+            dir=board[i][j][1]
+
+            for d in range(8):
+
+                nx=i+dx[dir]
+                ny=j+dy[dir]
+
+                if 0<=nx<4 and 0<=ny<4 and (nx,ny)!=(sx,sy):
+
+                    board[i][j][1]=dir
+
+                    board[nx][ny],board[i][j]=board[i][j],board[nx][ny]
                     break
-        if f_x == -1 and f_y == -1:
-            continue
-
-        fish_dir = board[f_x][f_y][1]
-
-        for i in range(8):
-            nd = (fish_dir + i) % 8
-            nx = f_x + dx[nd]
-            ny = f_y + dy[nd]
-
-            if not (0 <= nx < 4 and 0 <= ny < 4) or (nx == sx and ny == sy):
-                continue
-
-            board[f_x][f_y][1] = nd
-            board[f_x][f_y], board[nx][ny] = board[nx][ny], board[f_x][f_y]
-            break
-    # shark move
-    s_d = board[sx][sy][1]
-    for i in range(1, 5):
-        nx = sx + dx[s_d] * i
-        ny = sy + dy[s_d] * i
-        if (0 <= nx < 4 and 0 <= ny < 4) and board[nx][ny][0] > 0:
-            dfs(nx, ny, score, copy.deepcopy(board))
+                dir=(dir+1)%8
 
 
-dfs(0, 0, 0, board)
-print(max_score)
+
+
+def shark_move(board,sx,sy):
+    arr=[]
+    dir=board[sx][sy][1]
+
+    for _ in range(4):
+
+        sx =sx+dx[dir]
+        sy= sy+dy[dir]
+
+        if 0<=sx<4 and 0<=sy<4 and board[sx][sy][0]!=-1:
+            arr.append((sx,sy))
+    return arr
+
+def dfs(board,x,y,sum):
+    global result
+
+    board = copy.deepcopy(board)
+    sum+=board[x][y][0]
+
+    board[x][y][0]=-1
+
+    move_fish(board,x,y)
+
+
+    # for i in board:
+    #     print(i)
+    # print()
+    # #return
+    arr = shark_move(board,x,y)
+
+    if len(arr)==0:
+        result = max(result,sum)
+
+    for nx,ny in arr:
+        dfs(board,nx,ny,sum)
+
+dfs(board,0,0,0)
+print(result)
+# board[0][0][0]=-1
+# move_fish(board,0,0)
+# for i in board:
+#     print(i)
+# print()
+
+
