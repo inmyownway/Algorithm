@@ -1,0 +1,60 @@
+from collections import deque
+
+N,M=map(int,input().split())
+x,y,d=map(int,input().split())
+
+board=[list(map(int,input().split())) for _ in range(N)]
+
+dx=[-1,0,1,0]
+dy=[0,1,0,-1]
+visited=[[False] * M for _ in range(N)]
+visited[x][y]=True
+
+# 북 동 남 서
+
+
+
+
+while True:
+
+    flag = 0
+
+    for i in range(4):
+
+        d = (d-1) % 4
+        nx = x + dx[d]
+        ny = y + dy[d]
+
+        if 0 <= nx < N and 0 <= ny < M:
+            if visited[nx][ny] == False and board[nx][ny] == 0:
+                #cnt+=1
+                flag =1
+                x = nx
+                y = ny
+                visited[x][y]=True
+                #print(x,y)
+                break
+
+    if flag==0:
+
+        if board[x-dx[d]][y-dy[d]]==1:
+            break
+        else:
+            x=x-dx[d]
+            y=y-dy[d]
+
+
+answer=0
+
+for i in range(N):
+    for j in range(M):
+        if visited[i][j]==True:
+            answer+=1
+print(answer)
+
+
+
+
+
+
+
