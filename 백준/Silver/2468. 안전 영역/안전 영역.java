@@ -27,12 +27,10 @@ public class Main {
 
             }
         }
-      int roop=0;
         while(true)
         {
-            find();
+            find(); // 안전영역
             rain();
-           // System.out.println(Arrays.deepToString(arr));
 
             boolean flag=false;
 
@@ -47,13 +45,11 @@ public class Main {
                     }
                 }
             }
-            //System.out.println(1);
             if(flag==false)
             {
                 System.out.println(maxNum);
                 break;
             }
-           // if(roop==5) break;
         }
     }
     public static void rain()
