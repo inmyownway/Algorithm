@@ -52,9 +52,8 @@ public class Main {
         {
             time++;
             spread();
-         //   print(board);
-         //   System.out.println();
-            On2();
+
+            On3();
 
 
         }
@@ -68,7 +67,7 @@ public class Main {
                 answer+=board[i][j];
             }
         }
-    //  print(board);
+
         System.out.println(answer);
     }
     public static void spread()
@@ -206,6 +205,8 @@ public class Main {
             board[x][0] = board[x-1][0];
         }
 
+
+
         for (int y = 0; y < C - 1; y++) {
             board[0][y] = board[0][y+1];
         }
@@ -242,6 +243,61 @@ public class Main {
         }
 
         board[bottom][1] = 0;
+
+    }
+    public static void On3()
+    {
+
+        int[] now = airMachine[0];
+
+
+
+
+        for(int i=now[0]-1;i>0;i--)
+        {
+            board[i][0]=board[i-1][0];
+        }
+
+        for(int i=0;i<C-1;i++)
+
+        {
+            board[0][i]=board[0][i+1];
+
+        }
+
+        for(int i=0;i<now[0];i++)
+        {
+            board[i][C-1]=board[i+1][C-1];
+        }
+
+        for(int i=C-1;i>1;i--)
+        {
+            board[now[0]][i]=board[now[0]][i-1];
+        }
+        board[now[0]][1]=0;
+
+
+        now = airMachine[1];
+
+
+
+        for (int i = now[0] + 1; i < R - 1; i++) {
+            board[i][0] = board[i+1][0];
+        }
+
+        for (int i = 0; i < C - 1; i++) {
+            board[R-1][i] = board[R-1][i+1];
+        }
+
+        for (int i = R - 1; i > now[0]; i--) {
+            board[i][C-1] = board[i-1][C-1];
+        }
+
+        for (int i = C - 1; i > 1; i--) {
+            board[now[0]][i] = board[now[0]][i-1];
+        }
+
+        board[now[0]][1] = 0;
 
     }
 
