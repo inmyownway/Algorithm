@@ -142,42 +142,63 @@ public class Main {
 				}
 			}
 				
+				
+			int newCnt=0;
+				
+				for(int x=0;x<kill.size();x++)
+				{
+					int[] t = kill.get(x);
+					if(copyBoard[t[0] ] [ t[1] ] == 1)
+					{
+						copyBoard[t[0] ] [ t[1] ]=0;
+						newCnt++;
+						
+					}
+				}
 			
 				// 킬수 제거
-				int killCnt=0;
+//				int killCnt=0;
+//				
+//				for(int i=0;i<N;i++)
+//				{
+//					for(int j=0;j<M;j++)
+//					{
+//						
+//					}
+//				}
+//				
+//				for(int i=0;i<N+1;i++)
+//				{
+//					for(int j=0;j<M;j++)
+//					{
+//						if(copyBoard[i][j]==1)
+//						{
+//							killCnt++;
+//							
+//						}
+//					}
+//				}
+//			
+//				for(int[] k : kill)
+//				{
+//					copyBoard[k[0]][k[1]]=0;
+//				
+//					
+//				}	
+//				for(int i=0;i<N+1;i++)
+//				{
+//					for(int j=0;j<M;j++)
+//					{
+//						if(copyBoard[i][j]==1)
+//						{
+//							killCnt--;
+//							
+//						}
+//					}
+//				}
+//			
 				
-				for(int i=0;i<N+1;i++)
-				{
-					for(int j=0;j<M;j++)
-					{
-						if(copyBoard[i][j]==1)
-						{
-							killCnt++;
-							
-						}
-					}
-				}
-			
-				for(int[] k : kill)
-				{
-					copyBoard[k[0]][k[1]]=0;
-				
-					
-				}	
-				for(int i=0;i<N+1;i++)
-				{
-					for(int j=0;j<M;j++)
-					{
-						if(copyBoard[i][j]==1)
-						{
-							killCnt--;
-							
-						}
-					}
-				}
-			
-				
-				cnt+=killCnt;
+				cnt+=newCnt;
 				
 
 				
