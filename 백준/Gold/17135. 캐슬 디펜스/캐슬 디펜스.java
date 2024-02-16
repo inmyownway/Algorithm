@@ -63,7 +63,6 @@ public class Main {
 			// 궁수 3명 뽑음 
 			//System.out.println(Arrays.toString(combIdx));
 			check();
-			//System.out.println(" ");
 			return;
 		}
 		if(cnt>=M) return;
@@ -80,7 +79,6 @@ public class Main {
 	{
 		
 		int cnt=0;
-		//System.out.println(Arrays.toString(combIdx));
 		
 		int[][] copyBoard = new int[N+1][M];
 		
@@ -98,7 +96,7 @@ public class Main {
 			ArrayList<int[]> kill = new ArrayList<>();
 			
 			
-			// 궁수 돌아가면서 죽일애들 kill 리스트에 넣음
+	
 			for(int i=0;i<3;i++)
 			{
 				int x= archer[combIdx[i]].x;
@@ -118,7 +116,10 @@ public class Main {
 					int cx=current[0];
 					int cy=current[1];
 					int dis=current[2];
-					
+					if(dis >D)
+					{
+						continue;
+					}
 					if(copyBoard[cx][cy]==1 && dis<=D)
 					{
 						kill.add(new int[] {cx,cy});
@@ -139,7 +140,7 @@ public class Main {
 					}
 				}
 			}
-				// 적 죽이기
+				
 			
 				
 			
@@ -154,9 +155,8 @@ public class Main {
 				}
 				for(int[] k : kill)
 				{
-				//	System.out.println("Kill "+Arrays.toString(k));
 					copyBoard[k[0]][k[1]]=0;
-					//cnt++;
+				
 					
 				}	
 		
@@ -188,11 +188,7 @@ public class Main {
 				}
 				cnt+=tempCnt2-tempCnt1;
 				
-			//	print(copyBoard);
-			//	System.out.println();
-				
-				// 적들 내려오기 
-			//	System.out.println("내려오고");
+
 				for(int i=0;i<M;i++)
 				{
 					copyBoard[N-1][i]=0;
@@ -231,8 +227,7 @@ public class Main {
 			    
 			
 		}
-	//	System.out.println();
-		//System.out.println("kill수: "+cnt );
+
 	}
 	public static boolean isBoundary(int x,int y)
 	{
