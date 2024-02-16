@@ -61,7 +61,7 @@ public class Main {
 			
 		{
 			// 궁수 3명 뽑음 
-			//System.out.println(Arrays.toString(combIdx));
+		
 			check();
 			return;
 		}
@@ -116,6 +116,7 @@ public class Main {
 					int cx=current[0];
 					int cy=current[1];
 					int dis=current[2];
+					
 					if(dis >D)
 					{
 						continue;
@@ -142,53 +143,45 @@ public class Main {
 			}
 				
 			
-				
-			
-				int[][] temp=new int[N+1][M];
+				// 킬수 제거
+				int killCnt=0;
 				
 				for(int i=0;i<N+1;i++)
 				{
 					for(int j=0;j<M;j++)
 					{
-						temp[i][j]=copyBoard[i][j];
+						if(copyBoard[i][j]==1)
+						{
+							killCnt++;
+							
+						}
 					}
 				}
+			
 				for(int[] k : kill)
 				{
 					copyBoard[k[0]][k[1]]=0;
 				
 					
 				}	
-		
-				// 적 카운트 
-				int tempCnt1=0;
-				int tempCnt2=0;
-				
-				for(int i=0;i<N;i++)
+				for(int i=0;i<N+1;i++)
 				{
 					for(int j=0;j<M;j++)
 					{
 						if(copyBoard[i][j]==1)
 						{
-							tempCnt1++;
+							killCnt--;
+							
 						}
 					}
-					
 				}
-				for(int i=0;i<N;i++)
-				{
-					for(int j=0;j<M;j++)
-					{
-						if(temp[i][j]==1)
-						{
-							tempCnt2++;
-						}
-					}
-					
-				}
-				cnt+=tempCnt2-tempCnt1;
+			
+				
+				cnt+=killCnt;
 				
 
+				
+				// 적 내려오게 하기
 				for(int i=0;i<M;i++)
 				{
 					copyBoard[N-1][i]=0;
@@ -204,7 +197,7 @@ public class Main {
 						}
 					}
 				}
-				    //print(copyBoard);
+				
 				// 적들 없으면 종료
 			    boolean flag=true;
 			    for(int a=0;a<N;a++)
