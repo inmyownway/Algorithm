@@ -38,37 +38,62 @@ public class Main {
 		for(int i=0;i<R;i++)
 		{
 			flag= false;
-			dfs(i,0);
+			d(i,0);
 		}
 		System.out.println(cnt);
 		
 	}
-	public static void dfs(int x,int y)
+//	public static void dfs(int x,int y)
+//	{
+//		
+//		// 범위를 넘거나 , 벽이거나(이미지나갔거나) , 이미 도착한 경우는
+//		if(!isBoundary(x, y) || board[x][y]=='x' || flag)
+//		{
+//			return;
+//		}
+//		
+//		board[x][y]='x';
+//		
+//		// 도착한경우
+//		if(y==C-1) {
+//			flag=true;
+//			cnt++;
+//			return;
+//		}
+//		
+//		for(int i=0;i<3;i++)
+//		{
+//			int nx=x+dx[i];
+//			int ny=y+dy[i];
+//			dfs(nx,ny);
+//		}
+//		
+//		
+//		
+//	}
+	public static void d(int x,int y)
 	{
-		
-		// 범위를 넘거나 , 벽이거나(이미지나갔거나) , 이미 도착한 경우는
-		if(!isBoundary(x, y) || board[x][y]=='x' || flag)
-		{
+		if(flag)
 			return;
-		}
 		
 		board[x][y]='x';
-		
 		// 도착한경우
 		if(y==C-1) {
+			
 			flag=true;
 			cnt++;
 			return;
 		}
-		
 		for(int i=0;i<3;i++)
 		{
-			int nx=x+dx[i];
-			int ny=y+dy[i];
-			dfs(nx,ny);
+			int nx = x+dx[i];
+			int ny= y+dy[i];
+			
+			if(isBoundary(nx, ny) && board[nx][ny]=='.')
+			{
+				d(nx,ny);
+			}
 		}
-		
-		
 		
 	}
 	public static boolean isBoundary(int x,int y)
@@ -79,3 +104,4 @@ public class Main {
 
 }
 
+//
