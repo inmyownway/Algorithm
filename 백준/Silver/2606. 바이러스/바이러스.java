@@ -1,59 +1,76 @@
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Arrays;
+import java.util.StringTokenizer;
+
+import javax.swing.InputMap;
 
 public class Main {
-    static int N;
-    static int[][] arr;
-    static boolean[] v;
-    static int cnt=0;
+//
+	static int N,M;
+	static int[] parents;
+	
+	public static void main(String[] args) throws IOException {
+	
+	
+		BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
+		StringTokenizer st;
+		
+		N=Integer.parseInt(bf.readLine());
+		M=Integer.parseInt(bf.readLine());
+		parents= new int[N+1];
+		
+		make();
+		
+		for(int i=0;i<M;i++)
+		{ 
+			st= new StringTokenizer(bf.readLine());
+			int a= Integer.parseInt(st.nextToken());
+			int b= Integer.parseInt(st.nextToken());
+		
+			union(a,b);		
+		}
+		
+		
+		int answer=0;
+		int so = parents[1];
+		for(int i=2;i<N+1;i++)
+		{
+			if(so==find(i))
+				answer++;
+		}
+		
+	//	System.out.println(Arrays.toString(parents));
+		System.out.println(answer);
+	}
 
-    public static void main(String[] args) {
-
-        Scanner sc = new Scanner(System.in);
-
-        N=sc.nextInt();
-        int p=sc.nextInt();
-
-        arr=new int[N+1][N+1];
-        v=new boolean[N+1];
-        for(int i=1;i<p+1;i++)
-        {
-            int x= sc.nextInt();
-            int y= sc.nextInt();
-
-            arr[x][y]=1;
-            arr[y][x]=1;
-
-        }
-        bfs(1);
-        System.out.println(cnt);
-    }
-    public static void bfs(int start)
-    {
-
-        Queue<Integer> q=new LinkedList();
-        q.add(start);
-
-        v[start]=true;
-
-        while(!q.isEmpty())
-        {
-            int now =q.poll();
-            //System.out.println(now);
-            for(int i=1;i<N+1;i++)
-            {
-                if(arr[now][i]==1 && v[i]==false)
-                {
-                    q.add(i);
-                    v[i]=true;
-                    cnt++;
-                   // System.out.println(cnt);
-                }
-            }
-        }
-
-
-        // [ [0,1,0] [1,0,1] [0,1,0]
-
-    }
-
+	public static void make()
+	{
+		for(int i=1;i<N+1;i++)
+		{
+			parents[i]=i;
+		}
+	}
+	public static int find(int x)
+	{
+		if(x==parents[x])
+			return x;
+		
+		return parents[x]=find(parents[x]);
+	}
+	public static void union(int x,int y)
+	{
+		int aRoot= find(x);
+		int bRoot = find(y);
+		
+		if(aRoot>bRoot)
+		{
+			parents[aRoot]=bRoot;
+		}
+		else if(aRoot < bRoot)
+		{
+			parents[bRoot]=aRoot;
+		}
+	}
 }
