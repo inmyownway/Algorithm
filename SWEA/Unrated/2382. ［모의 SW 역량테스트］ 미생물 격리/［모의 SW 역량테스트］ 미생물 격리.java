@@ -45,7 +45,7 @@ public class Solution {
 				board[x][y]=dir;
 				
 			}
-			//print(numInfo);
+			
 	
 			for(int i=0;i<M;i++)
 			{
@@ -53,10 +53,7 @@ public class Solution {
 				move();
 
 				
-//				print(board);
-//			System.out.println();
-//			print(numInfo);
-			////System.out.println("@@@@@");
+
 			}
 
 			
@@ -87,14 +84,12 @@ public class Solution {
 			for(int j=0;j<N;j++)
 			{
 				if(board[i][j]!=0)
-				{//System.out.println(i+" "+j+" 일떄 ");
+				{
 					int dir= board[i][j];
 					
 					int nx= i+dx[dir];
 					int ny= j+dy[dir];
-				//	System.out.println(nx+" "+ny+" "+dir);
-				//	System.out.println(numInfo[i][j]);
-				//	System.out.println(isBoundary(nx, ny));
+				
 					// 밖일때 
 					if(!isBoundary(nx, ny))
 					{
@@ -104,7 +99,7 @@ public class Solution {
 						
 						if(numInfo[i][j]>1)
 						{
-						//	System.out.println("!");
+					
 							dir= changeDir(dir);
 							tempBoard[nx][ny]=dir;
 							tempNumInfo[nx][ny]= numInfo[i][j]/2;
@@ -123,12 +118,12 @@ public class Solution {
 							}
 						else
 						{ // 겹치는게 있을때,  마리수 합쳐주고 방향 비교해줘야함 
-							//System.out.println("!");
+						
 							int currentNum = numInfo[i][j];
 							
 							if(compareNum[nx][ny]<currentNum)
 							{
-								//System.out.println(1);
+						
 								
 								compareNum[nx][ny]=currentNum;
 								tempNumInfo[nx][ny]+=currentNum;
@@ -145,11 +140,7 @@ public class Solution {
 						board[i][j]=0;
 						numInfo[i][j]=0;
 						
-					}	//System.out.println(i+" "+j);
-//					print(tempBoard);
-//					System.out.println();
-//					print(tempNumInfo);
-//					System.out.println();
+					}	
 			
 				}
 				board[i][j]=0;
