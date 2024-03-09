@@ -1,30 +1,38 @@
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.StringTokenizer;
 
-public class Main {
-    static class Point{
+public class BOJ_감시_15683 {
+    static int N,M;
+    static int[][] b;
+    static int[] dx= {0,0,-1,1};
+    static int[] dy={1,-1,0,0};
+    static ArrayList<Camera> camera;
+    static int min;
+    static public class Camera{
         int x;
         int y;
         int cctvNum;
-        Point(int x, int y, int cctvNum) {
-            this.x = x;
-            this.y = y;
-            this.cctvNum = cctvNum;
+        public Camera(int x,int y,int cctvNum){
+            this.x=x;
+            this.y=y;
+            this.cctvNum=cctvNum;
         }
+
+
     }
-    static int N, M;
-    static int min = Integer.MAX_VALUE;
-    static int[][] dist = {{}, {0, 1, 2, 3}, {}, {}, {}, {}};
-    public static void main(String[] args) throws Exception {
+
+    public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
 
         N = Integer.parseInt(st.nextToken());
         M = Integer.parseInt(st.nextToken());
         int[][] map = new int[N][M];
-        ArrayList<Point> cctv = new ArrayList<>();
+        ArrayList<Camera> cctv = new ArrayList<>();
 
         for(int i=0; i<N; i++) {
             st = new StringTokenizer(br.readLine());
@@ -32,7 +40,7 @@ public class Main {
                 map[i][j] = Integer.parseInt(st.nextToken());
                 //벽이나 빈 곳이 아닐 때 = cctv인 경우
                 if(map[i][j] != 0 && map[i][j] != 6) {
-                    cctv.add(new Point(i, j, map[i][j]));
+                    cctv.add(new Camera(i, j, map[i][j]));
                 }
             }
         }
@@ -40,8 +48,7 @@ public class Main {
         dfs(0, map, cctv);
         System.out.println(min);
     }
-
-    public static void dfs(int cnt, int[][] map, ArrayList<Point> cctv) {
+    public static void dfs(int cnt, int[][] map, ArrayList<Camera> cctv) {
         if(cnt == cctv.size()) {
             min = Math.min(min, getZeroCnt(map));
             return;
@@ -187,3 +194,4 @@ public class Main {
         return 0<=x && x<N && 0<=y && y<M;
     }
 }
+
