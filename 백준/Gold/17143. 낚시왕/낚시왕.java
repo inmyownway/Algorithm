@@ -1,212 +1,235 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.StringTokenizer;
 
+
+
 public class Main {
-    static class Shark{
-        int x;
-        int y;
-        int s;
-        int d;
-        int z;
 
+	static int R,C,M;
+	static int[][][] board;
+	static int king= 0;
+	static int[][] numBoard;
+	static int[] dx = {0,-1,1,0,0};
+	static int[] dy= {0,0,0,  1,-1};
+	static int answer;
+	public static class Shark implements Comparable<Shark>
+	{
+		int x;
+		int y;
+		int s;
+		int d;
+		int z;
+		int num;
+		public Shark(int x, int y, int s, int d, int z,int num) {
+			super();
+			this.x = x;
+			this.y = y;
+			this.s = s;
+			this.d = d;
+			this.z = z;
+			this.num=num;
+		}
+		@Override
+		public String toString() {
+			return "Shark [x=" + x + ", y=" + y + ", s=" + s + ", d=" + d + ", z=" + z + "]";
+		}
+		@Override
+		public int compareTo(Shark o) {
+			
+			return Integer.compare(o.z, this.z);
+		}
+		
+	}
+	static ArrayList<Shark> sharks;
+	public static void main(String[] args) throws IOException {
+		// TODO Auto-generated method stub
 
+		
+		/*
+		 *  1. 낚시왕 이동
+		 *  2. 제일 가까운 상어 제거
+		 *  3. 상어이동
+		 *  	
+		 *  정렬하고 이동 tempBoard = 0 에 크기 넣음 
+		 *  	- 이동시 tempBoard 
+		 *  
+		 * 
+		 *  if(temp[x][y]==0 ) arr.add(shark)
+		 * 
+		 * */
+		BufferedReader bf= new BufferedReader(new InputStreamReader(System.in));
+		StringTokenizer st= new StringTokenizer(bf.readLine());
+		
+		R=Integer.parseInt(st.nextToken());
+		C=Integer.parseInt(st.nextToken());
+		M=Integer.parseInt(st.nextToken());
+		
+		board =new int[R][C][3];
+		
+		sharks = new ArrayList<>();
+		numBoard= new int[R][C];
+		for(int i=0;i<M;i++)
+		{
+			st= new StringTokenizer(bf.readLine());
+			
+			int r= Integer.parseInt(st.nextToken())-1;
+			int c= Integer.parseInt(st.nextToken())-1;
+			int s= Integer.parseInt(st.nextToken());
+			int d= Integer.parseInt(st.nextToken());
+			int z= Integer.parseInt(st.nextToken());
 
-        public Shark(int x,int y,int s,int d,int z)
-        {
-            this.x=x;
-            this.y=y;
-            this.s=s;
-            this.d=d;
-            this.z=z;
+			board[r][c][0]=s;
+			board[r][c][1]=d;
+			board[r][c][2]=z;
+			
+		}
+		
+		
+		for(int a=0;a<C;a++)
+		{
+			
+			// 가까운 상어 제거 
+			remove(a);
+			// 상어이동 
+			sharkMove();
+			
+//			for(int i=0;i<R;i++)
+//			{
+//				for(int j=0;j<C;j++)
+//				{
+//					System.out.print(board[i][j][2]+" ");
+//				}
+//				System.out.println();
+//			}
+//			System.out.println();
+	
+		}
+		System.out.println(answer);
+		
+		
+	}
 
-        }
+	private static void sharkMove() {
+		
+	
+		
+		int[][][] temp = new int[R][C][3];
+		
 
-        @Override
-        public String toString() {
-            return "Shark{" +
-                    "x=" + x +
-                    ", y=" + y +
-                    ", s=" + s +
-                    ", d=" + d +
-                    ", z=" + z +
-                    '}';
-        }
-    }
-    //d가 1인 경우는 위, 2인 경우는 아래, 3인 경우는 오른쪽, 4인 경우는 왼쪽을 의미한다.
-    static int R,C,M;
-    static int rx,ry;
-    static int[][][] board;
-    static int speed,dir,power,nx,ny;
-    static int[] dx={-1,1,0,0};
-    static int[] dy={0,0,1,-1};
-    static int answer;
-    public static void main(String[] args) throws IOException {
+			for(int i=0;i<R;i++)
+			{
+				for(int j=0;j<C;j++)
+				{
+					// 상어가 있으면 
+					if(board[i][j][2]>0)
+					{
+						
+						
+						int nx= i;
+						int ny= j;
+						
+						int ns= board[i][j][0];
+						int nd= board[i][j][1];
+						int nz= board[i][j][2];
+						
+						for(int idx=0;idx<ns;idx++)
+						{
+							nx+=dx[nd];
+							ny+=dy[nd];
+						
+							if(!isBoundary(nx, ny))
+							{
+								nd= turn(nd);
+								nx+= (dx[nd]*2);
+								ny+= (dy[nd]*2);
+							}		
+							
+						}
+						
+						
+						// 위치 나옴
+						// 상어가 있으면 크기비교해서 큰거 넣어줌
+						if(temp[nx][ny][2]>0)
+						{
+							if(temp[nx][ny][2] < nz)
+							{
+								temp[nx][ny][0]=ns;
+								temp[nx][ny][1]=nd;
+								temp[nx][ny][2]=nz;
+							}
+						}
+						else if(temp[nx][ny][2]==0)
+						{
+							temp[nx][ny][0]=ns;
+							temp[nx][ny][1]=nd;
+							temp[nx][ny][2]=nz;
+						}
+						
+					}
+					
+				
+				}
+			}
+			
+			board= new int[R][C][3];
+			for(int i=0;i<R;i++)
+			{
+				for(int j=0;j<C;j++) {
+					
+					board[i][j][0]=temp[i][j][0];
+					board[i][j][1]=temp[i][j][1];
+					board[i][j][2]=temp[i][j][2];
+				}
+			}
+			
+			
 
-        BufferedReader bf= new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st = new StringTokenizer(bf.readLine());
+		
+		
+	}
+	private static int turn(int d) {
+		
+		if(d==1)
+			return 2;
+		else if (d==2)
+			return 1;
+		else if(d==3)
+			return 4;
+		return 3;
+		
+	}
+	private static void remove(int i) {
 
-        R= Integer.parseInt(st.nextToken());
-        C=Integer.parseInt(st.nextToken());
-        M=Integer.parseInt(st.nextToken());
-        board= new int[R][C][3];
-        for(int i=0;i<M;i++)
+		int num=0;
+		//System.out.println("pos: "+i);
 
-        {
-         //   System.out.println(i);
-            st= new StringTokenizer(bf.readLine());
+		for(int j=0;j<R;j++)
+		{
+			if(board[j][i][2]>0)
+			{
+				//System.out.println("j i"+" "+i+" "+j);
+				answer+= board[j][i][2];
+			
+				board[j][i][0]=0;
 
-            int tx= Integer.parseInt(st.nextToken());
-            int ty= Integer.parseInt(st.nextToken());
-            int ts = Integer.parseInt(st.nextToken());
-            int td = Integer.parseInt(st.nextToken());
-            int tz = Integer.parseInt(st.nextToken());
-            board[tx-1][ty-1][0]=ts;
-            board[tx-1][ty-1][1]=td-1;
-            board[tx-1][ty-1][2]=tz;
+				board[j][i][1]=0;
 
-        //    System.out.println(tx+" "+ty+" "+ts+" "+td+" "+tz);
+				board[j][i][2]=0;
+				break;
+			}
+		}
+		
 
-        }
-        rx=0;
-        ry=-1;
-       // System.out.println("@@");
-   //print();
-        for(int time=0;time<C;time++)
-        {
-            // 사람 이동
-           // System.out.println("time "+time);
+		
+	}
+	public static boolean isBoundary(int x,int y)
+	{
+		return x>=0 && x<R && y>=0 && y<C;
+	}
 
-            ry++;
-
-            // 열에 가까운 상어 제거
-            for(int i=0;i<R;i++)
-            {
-                if (board[i][ry][2] >= 1) {
-
-                    answer+=board[i][ry][2];
-                    board[i][ry][0] = 0;
-                    board[i][ry][1] = 0;
-                    board[i][ry][2] = 0;
-
-                    break;
-                }
-            }
-
-
-            // 상어이동
-            moveShark();
-         //   print();
-
-
-        }
-        System.out.println(answer);
-    }
-    public static void moveShark()
-    {
-        int[][][] tempBoard = new int[R][C][3];
-
-        for(int i=0;i<R;i++)
-        {
-            for(int j=0;j<C;j++)
-            {
-                if(board[i][j][2]>=1)
-                {
-
-                    speed=board[i][j][0];
-                    dir= board[i][j][1];
-                    power = board[i][j][2];
-                    // init(i,j);
-                    nx= i;
-                    ny= j;
-
-                    for(int m=0;m<speed;m++)
-                    {
-                        nx+=dx[dir];
-                        ny+=dy[dir];
-                        if(!isBoundary(nx,ny))
-                        {
-
-                            changeDir(dir);
-                            nx+=dx[dir]*2;
-                            ny+=dy[dir]*2;
-                        }
-                    }
-
-                    // 만약 상어가 있는경우
-                    if(tempBoard[nx][ny][2]!=0)
-                    {
-                        if(tempBoard[nx][ny][2]<power)
-                        {
-                            tempBoard[nx][ny][0]=speed;
-                            tempBoard[nx][ny][1]=dir;
-                            tempBoard[nx][ny][2]=power;
-                        }
-                    }
-                    else if(tempBoard[nx][ny][2]==0)
-                    {
-                        tempBoard[nx][ny][0]=speed;
-                        tempBoard[nx][ny][1]=dir;
-                        tempBoard[nx][ny][2]=power;
-                    }
-                }
-            }
-        }
-        copyBoard(tempBoard);
-
-    }
-    public static boolean isBoundary(int x,int y)
-    {
-        return x>=0 && x<R && y>=0 && y<C;
-    }
-    public static void changeDir(int x)
-    {
-        if(x==0)
-            dir=1;
-        else if(x==1)
-            dir=0;
-        else if(x==2)
-            dir=3;
-        else
-            dir=2;
-    }
-    public static void init(int x,int y)
-    {
-        board[x][y][0]=0;
-        board[x][y][1]=0;
-        board[x][y][2]=0;
-    }
-    public static void print()
-    {
-        for(int i=0;i<R;i++)
-        {
-          for(int j=0;j<C;j++)
-          {
-              System.out.print(board[i][j][0]+" ");
-          }
-            System.out.println();
-        }
-
-        System.out.println();
-    }
-
-    public static void copyBoard(int[][][] temp)
-    {
-        for(int i=0;i<R;i++)
-        {
-            for(int j=0;j<C;j++)
-            {
-                for(int idx=0;idx<3;idx++)
-                {
-                    board[i][j][idx]=temp[i][j][idx];
-                }
-            }
-        }
-
-    }
-
-
+	
 }
