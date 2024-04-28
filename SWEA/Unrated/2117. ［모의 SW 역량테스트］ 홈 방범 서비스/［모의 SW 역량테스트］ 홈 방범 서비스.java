@@ -1,150 +1,114 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.OptionalInt;
 import java.util.Queue;
 import java.util.StringTokenizer;
 
 public class Solution {
     static int N,M;
+    static boolean[][] visited;
     static int[][] board;
-    static int minNum;
-    static int[] dx={0,0,-1,1};
-    static int[] dy={1,-1,0,0};
-    static int homeNum;
-    static int maxNum=-1;
+    static int answerPrice;
+    static int answerHomeCnt;
+    static int K;
+    static int[] dx= {0,0,-1,1};
+    static int[] dy ={1,-1,0,0};
+
     public static void main(String[] args) throws IOException {
 
-        BufferedReader bf =new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st;
+        BufferedReader bf= new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st= new StringTokenizer(bf.readLine());
 
-        int testCase= Integer.parseInt(bf.readLine());
 
-        for(int tc=1;tc<testCase+1;tc++)
+        int testCase= Integer.parseInt(st.nextToken());
+
+        for(int test=1;test<testCase+1;test++)
         {
             st= new StringTokenizer(bf.readLine());
-            N=Integer.parseInt(st.nextToken());
-            M=Integer.parseInt(st.nextToken());
+            N= Integer.parseInt(st.nextToken());
+            M= Integer.parseInt(st.nextToken());
 
-            minNum=Integer.MIN_VALUE;
             board= new int[N][N];
-            maxNum=-1;
-
-            homeNum=0;
-            for(int i=0;i<N;i++) {
-                st= new StringTokenizer(bf.readLine());
-            for(int j=0;j<N;j++)
+            answerPrice=Integer.MIN_VALUE;
+            answerHomeCnt=0;
+            for(int i=0;i<N;i++)
             {
-                board[i][j]=Integer.parseInt(st.nextToken());
-                if(board[i][j]==1)
+                st= new StringTokenizer(bf.readLine());
+                for(int j=0;j<N;j++)
                 {
-                    homeNum+=1;
+                    board[i][j]= Integer.parseInt(st.nextToken());
                 }
             }
-            }
-
-            int k=1;
 
             for(int i=0;i<N;i++)
             {
                 for(int j=0;j<N;j++)
                 {
-                  check(i,j);
+                 //   System.out.println(i+" "+j);
+                    check(i,j);
 
                 }
 
-
             }
-
-            System.out.println("#"+tc+" "+maxNum);
+            System.out.println("#"+test+" "+answerHomeCnt);
         }
-
-
     }
-    public static void check(int x,int y)
+    private static void check(int x,int y)
     {
-        boolean[][] visited= new boolean[N][N];
+        Queue<int[]> q= new LinkedList<>();
+        visited= new boolean[N][N];
 
-        Queue<int[]> q = new LinkedList<>();
         q.add(new int[]{x,y});
         visited[x][y]=true;
-        int k=1;
-        int sum=0;
-        if(board[x][y]==1)
-            sum++;
 
-        if(k*k+(k-1)*(k-1) <= sum*M)
-        {
-            maxNum=Math.max(maxNum,sum);
-            
-        }        
-
-        k++;
-
+        K=1;
+        int homeCnt=0;
         while(!q.isEmpty())
         {
+           // System.out.println();
+            //ystem.out.println("단계 "+K);
 
-            int qlen= q.size();
-
-
-            for(int idx=0;idx<qlen;idx++)
+            int size=q.size();
+            for(int s=0;s<size;s++)
             {
+                int[] now = q.poll();
 
-                int[] now =q.poll();
+                int tx= now[0];
+                int ty= now[1];
 
-
-
-                for(int i=0;i<4;i++)
+                if(board[tx][ty]==1)
                 {
-
-
-
-                    int nx= now[0]+dx[i];
-                    int ny= now[1]+dy[i];
-
-                    if(isBoundary(nx,ny) && !visited[nx][ny])
-                    {
-                        q.add(new int[]{nx,ny});
-                        visited[nx][ny]=true;
-                        // 집 발견
-                        if(board[nx][ny]==1)
-                        {
-                            sum++;
-                        }
-
-
-                    }
-
+                    homeCnt++;
                 }
 
-
-
+                for(int idx=0;idx<4;idx++)
+                {
+                    int nx= tx+dx[idx];
+                    int ny= ty+dy[idx];
+                    if(isBoundary(nx,ny) && !visited[nx][ny])
+                    {
+                        visited[nx][ny]=true;
+                        q.add(new int[]{nx,ny});
+                    }
+                }
             }
 
-      
 
 
-
-         
-            if(k*k+(k-1)*(k-1) <= sum*M)
+            if(0 <= M*homeCnt -(K*K+(K-1)*(K-1)))
             {
-                maxNum=Math.max(maxNum,sum);
-            
+
+              answerHomeCnt=Math.max(answerHomeCnt,homeCnt);
+
             }
-            k++;
-
-            if(k==N*N)
-                break;
-
-
+            K++;
         }
-
-
     }
-
-    public static boolean isBoundary(int x,int y)
+    private static boolean isBoundary(int x,int y)
     {
-        return x>=0&& x<N && y>=0 && y<N;
+        return x>=0 && x<N && y>=0 && y<N;
     }
-
 }
