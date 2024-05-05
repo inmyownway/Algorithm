@@ -8,132 +8,143 @@ import java.util.StringTokenizer;
 public class Solution {
     static int N;
     static int[][] board;
-    static int lengthAnswer;
-    static int coreAnswer;
-    static ArrayList<Core> core;
-    static int initCoreCnt;
+    static int answerNode;
+    static int answerLength;
+    static int sideNodeCnt;
+    static ArrayList<int[]> arr;
     static int[] dx= {0,0,-1,1};
     static int[] dy={1,-1,0,0};
-    static class Core
-    {
-        int x;
-        int y;
-
-        public Core(int x, int y) {
-            this.x = x;
-            this.y = y;
-        }
-
-        @Override
-        public String toString() {
-            return "Core{" +
-                    "x=" + x +
-                    ", y=" + y +
-                    '}';
-        }
-    }
-
     public static void main(String[] args) throws IOException {
 
         BufferedReader bf= new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st= new StringTokenizer(bf.readLine());
+        StringTokenizer st;
 
-        int testCase= Integer.parseInt(st.nextToken());
+        int testCase= Integer.parseInt(bf.readLine());
 
-        for(int test=1;test<testCase+1;test++)
+        for(int t=1;t<testCase+1;t++)
         {
-            st= new StringTokenizer(bf.readLine());
-            N= Integer.parseInt(st.nextToken());
-            board= new int[N][N];
-            lengthAnswer= Integer.MAX_VALUE;
-            coreAnswer= Integer.MIN_VALUE;
-            core= new ArrayList<>();
-            initCoreCnt =0;
+            N=Integer.parseInt(bf.readLine());
+
+
+
+            arr = new ArrayList<>();
+            answerLength=Integer.MAX_VALUE;
+            answerNode= Integer.MIN_VALUE;
+            sideNodeCnt=0;
+            board = new int[N][N];
 
             for(int i=0;i<N;i++)
-            {   st= new StringTokenizer(bf.readLine());
-                for(int j=0;j<N;j++) {
+            {
+                st = new StringTokenizer(bf.readLine());
 
-                    board[i][j] = Integer.parseInt(st.nextToken());
+                for(int j=0;j<N;j++)
+                {
+                    board[i][j]=Integer.parseInt(st.nextToken());
                     if(board[i][j]==1)
                     {
-                        if(i>=1 && i<N-1 && j>=1 && j<N-1)
+                        if( i==0 || i==N-1 || j==0 || j==N-1)
                         {
-                           // System.out.println(i+" "+j);
-                            core.add(new Core(i,j));
+                            continue;
                         }
-                        else
-                        {
-                            initCoreCnt++;
-                        }
+                        arr.add(new int[]{i,j});
+                      //  System.out.println(i+ " "+j);
                     }
+
                 }
             }
 
-
             dfs(0,0);
-            //System.out.println(coreAnswer);
-            System.out.println("#"+test+" "+ lengthAnswer);
-
+            System.out.println("#"+t+" "+answerLength);
         }
-
     }
+    private static void dfs(int idx,int nodeCnt)
+    {
 
-    private static void dfs(int idx,int coreCnt) {
-
-        if(idx==core.size())
+        if(idx==arr.size())
         {
-//            for(int[]b:board)
-//            {
-//                System.out.println(Arrays.toString(b));
-//            }
-//
-//            System.out.println();
-            check(coreCnt);
 
-           // System.out.println("coreAnswer: "+coreAnswer+" lengthAnswer: "+lengthAnswer);
+            int length=0;
+
+            for(int i=0;i<N;i++)
+            {
+                for(int j=0;j<N;j++)
+                {
+                    if(board[i][j]==2)
+                        length++;
+                }
+            }
+
+            if(nodeCnt == answerNode)
+            {
+               answerLength=Math.min(answerLength,length);
+            }
+            else if(nodeCnt > answerNode)
+            {
+                answerNode=nodeCnt;
+                answerLength=length;
+            }
+
             return;
         }
 
 
-        Core now = core.get(idx);
+        int[] now =arr.get(idx);
+
+
 
         for(int i=0;i<4;i++)
         {
-
-            int tx= now.x;
-            int ty= now.y;
             boolean flag= false;
-            int tempIdx=0;
-            while(true)
+            int nx=now[0];
+            int ny=now[1];
+            int vCnt=0;
+            while (true)
             {
-                tx+=dx[i];
-                ty+=dy[i];
-                if(!isBoundary(tx,ty))
-                {
-                    flag=true;
-                    break;
-                }
-                else if(board[tx][ty]==1 || board[tx][ty]==2)
-                {
-                    break;
-                }
-                board[tx][ty]=2;
-                tempIdx++;
+                 nx +=dx[i];
+                 ny +=dy[i];
 
+                 if(!isBoundary(nx,ny))
+                 {
+                     flag=true;
+                     break;
+                 }
+
+                 if(board[nx][ny]!=0)
+                    break;
+
+                 board[nx][ny]=2;
+                 vCnt++;
 
 
             }
+
+
             if(flag)
             {
-                dfs(idx+1,coreCnt+1);
+
+                dfs(idx+1,nodeCnt+1);
 
             }
             else
-            {    returnBack(now.x,now.y,i,tempIdx);
-                dfs(idx+1,coreCnt);
+            {    nx=now[0];
+                ny=now[1];
+                for(int j=0;j<vCnt;j++)
+                {
+                    nx += dx[i];
+                    ny += dy[i];
+                    board[nx][ny]=0;
+                }
+                dfs(idx+1,nodeCnt);
+
             }
-            returnBack(now.x,now.y,i,tempIdx);
+            nx=now[0];
+            ny=now[1];
+            for(int j=0;j<vCnt;j++)
+            {
+                nx += dx[i];
+                ny += dy[i];
+                board[nx][ny]=0;
+            }
 
 
         }
@@ -141,55 +152,8 @@ public class Solution {
     }
     private static boolean isBoundary(int x,int y)
     {
-        return x>=0 && x<N && y>=0 && y<N;
-    }
-    public static void returnBack(int x,int y,int i,int tempIdx)
-    {
-        int tx= x;
-        int ty= y;
-        // return back
-        for(int idx=0;idx<tempIdx;idx++)
-        {
-            tx+=dx[i];
-            ty+=dy[i];
-            board[tx][ty]=0;
-        }
-
+        return x>=0 && x<N &&y>=0 && y<N;
     }
 
-    public static void check(int coreCnt)
-    {
-        int way=0;
-        for(int i=0;i<N;i++)
-        {
-            for(int j=0;j<N;j++)
-            {
-                if (board[i][j]==2)
-                    way++;
-            }
-
-        }
-
-          // System.out.println(coreCnt+" way: "+way);
-
-
-
-
-
-            if(coreCnt>coreAnswer)
-            {
-                coreAnswer=coreCnt;
-                lengthAnswer=way;
-            }
-            else if(coreCnt==coreAnswer)
-            {
-                lengthAnswer=Math.min(way,lengthAnswer);
-            }
-
-
-
-
-
-    }
 
 }
