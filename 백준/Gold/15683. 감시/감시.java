@@ -5,139 +5,178 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.StringTokenizer;
 
-public class BOJ_감시_15683 {
+public class Main {
     static int N,M;
-    static int[][] b;
+    static int[][] board;
     static int[] dx= {0,0,-1,1};
-    static int[] dy={1,-1,0,0};
-    static ArrayList<Camera> camera;
-    static int min;
-    static public class Camera{
+    static int[] dy= {1,-1,0,0};
+    static class CCTV{
         int x;
         int y;
-        int cctvNum;
-        public Camera(int x,int y,int cctvNum){
-            this.x=x;
-            this.y=y;
-            this.cctvNum=cctvNum;
+        int num;
+
+        @Override
+        public String toString() {
+            return "CCTV{" +
+                    "x=" + x +
+                    ", y=" + y +
+                    ", num=" + num +
+                    '}';
         }
 
-
+        public CCTV(int x, int y, int num) {
+            this.x = x;
+            this.y = y;
+            this.num = num;
+        }
     }
-
+    static int answer= Integer.MAX_VALUE;
+    static ArrayList<CCTV> cctv;
     public static void main(String[] args) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st = new StringTokenizer(br.readLine());
 
-        N = Integer.parseInt(st.nextToken());
-        M = Integer.parseInt(st.nextToken());
-        int[][] map = new int[N][M];
-        ArrayList<Camera> cctv = new ArrayList<>();
+        BufferedReader bf= new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st= new StringTokenizer(bf.readLine());
+        N=Integer.parseInt(st.nextToken());
+        M=Integer.parseInt(st.nextToken());
 
-        for(int i=0; i<N; i++) {
-            st = new StringTokenizer(br.readLine());
-            for(int j=0; j<M; j++) {
-                map[i][j] = Integer.parseInt(st.nextToken());
-                //벽이나 빈 곳이 아닐 때 = cctv인 경우
-                if(map[i][j] != 0 && map[i][j] != 6) {
-                    cctv.add(new Camera(i, j, map[i][j]));
+        board= new int[N][M];
+        cctv= new ArrayList<>();
+        for(int i=0;i<N;i++)
+        {
+            st= new StringTokenizer(bf.readLine());
+            for(int j=0;j<M;j++)
+            {
+                board[i][j]=Integer.parseInt(st.nextToken());
+                if(board[i][j]>=1 && board[i][j]< 6)
+                {
+                    cctv.add(new CCTV(i,j,board[i][j]));
                 }
             }
         }
 
-        dfs(0, map, cctv);
-        System.out.println(min);
+        dfs(0,board,cctv);
+
+        System.out.println(answer);
+
     }
-    public static void dfs(int cnt, int[][] map, ArrayList<Camera> cctv) {
-        if(cnt == cctv.size()) {
-            min = Math.min(min, getZeroCnt(map));
+
+    public static void dfs(int cnt,int[][] board,ArrayList<CCTV> cctv)
+    {
+
+        if(cnt== cctv.size()){
+            //
+            int sum=0;
+            for(int i=0;i<N;i++)
+            {
+                for(int j=0;j<M;j++)
+                {
+                    if(board[i][j]==0)
+                        sum++;
+                }
+
+            }
+           // print();
+            answer= Math.min(answer,sum);
             return;
         }
+        //System.out.println(cnt);
+        CCTV now = cctv.get(cnt);
+       // System.out.println(now);
+        int num= now.num;
+        int x= now.x;
+        int y= now.y;
+        int[][] temp;
+        if(num==1)
+        {
+            temp= copyMap(board);
+            checkLeft(temp,x,y);
+            dfs(cnt+1,temp,cctv);
 
-        int cctvNum = cctv.get(cnt).cctvNum;
-        int x = cctv.get(cnt).x;
-        int y = cctv.get(cnt).y;
-        int[][] tmp;
-        if(cctvNum == 1) {
-            tmp = copyMap(map);
-            checkLeft(tmp, x, y);
-            dfs(cnt+1, tmp, cctv);
+            temp= copyMap(board);
+            checkRight(temp,x,y);
+            dfs(cnt+1,temp,cctv);
 
-            tmp = copyMap(map);
-            checkRight(tmp, x, y);
-            dfs(cnt+1, tmp, cctv);
+            temp= copyMap(board);
+            checkDown(temp,x,y);
+            dfs(cnt+1,temp,cctv);
 
-            tmp = copyMap(map);
-            checkDown(tmp, x, y);
-            dfs(cnt+1, tmp, cctv);
+            temp= copyMap(board);
+            checkUp(temp,x,y);
+            dfs(cnt+1,temp,cctv);
 
-            tmp = copyMap(map);
-            checkUp(tmp, x, y);
-            dfs(cnt+1, tmp, cctv);
-        } else if (cctvNum == 2) {
-            tmp = copyMap(map);
-            checkLeft(tmp, x, y);
-            checkRight(tmp, x, y);
-            dfs(cnt+1, tmp, cctv);
-
-            tmp = copyMap(map);
-            checkUp(tmp, x, y);
-            checkDown(tmp, x, y);
-            dfs(cnt+1, tmp, cctv);
-        } else if (cctvNum == 3) {
-            tmp = copyMap(map);
-            checkLeft(tmp, x, y);
-            checkUp(tmp, x, y);
-            dfs(cnt+1, tmp, cctv);
-
-            tmp = copyMap(map);
-            checkUp(tmp, x, y);
-            checkRight(tmp, x, y);
-            dfs(cnt+1, tmp, cctv);
-
-            tmp = copyMap(map);
-            checkRight(tmp, x, y);
-            checkDown(tmp, x, y);
-            dfs(cnt+1, tmp, cctv);
-
-            tmp = copyMap(map);
-            checkDown(tmp, x, y);
-            checkLeft(tmp, x, y);
-            dfs(cnt+1, tmp, cctv);
-        } else if(cctvNum == 4) {
-            tmp = copyMap(map);
-            checkLeft(tmp, x, y);
-            checkUp(tmp, x, y);
-            checkRight(tmp, x, y);
-            dfs(cnt+1, tmp, cctv);
-
-            tmp = copyMap(map);
-            checkUp(tmp, x, y);
-            checkRight(tmp, x, y);
-            checkDown(tmp, x, y);
-            dfs(cnt+1, tmp, cctv);
-
-            tmp = copyMap(map);
-            checkRight(tmp, x, y);
-            checkDown(tmp, x, y);
-            checkLeft(tmp ,x , y);
-            dfs(cnt+1, tmp, cctv);
-
-            tmp = copyMap(map);
-            checkDown(tmp, x, y);
-            checkLeft(tmp ,x , y);
-            checkUp(tmp, x, y);
-            dfs(cnt+1, tmp, cctv);
-        } else if(cctvNum == 5) {
-            tmp = copyMap(map);
-            checkRight(tmp, x, y);
-            checkDown(tmp, x, y);
-            checkLeft(tmp ,x , y);
-            checkUp(tmp, x, y);
-            dfs(cnt+1, tmp, cctv);
         }
-    }
+        else if(num==2)
+        {
+            temp= copyMap(board);
+            checkRight(temp,x,y);
+            checkLeft(temp,x,y);
+            dfs(cnt+1,temp,cctv);
 
+            temp= copyMap(board);
+            checkUp(temp,x,y);
+            checkDown(temp,x,y);
+            dfs(cnt+1,temp,cctv);
+
+        }
+        else if(num==3)
+        {
+            temp = copyMap(board);
+            checkLeft(temp, x, y);
+            checkUp(temp, x, y);
+            dfs(cnt+1, temp, cctv);
+
+            temp = copyMap(board);
+            checkUp(temp, x, y);
+            checkRight(temp, x, y);
+            dfs(cnt+1, temp, cctv);
+
+            temp = copyMap(board);
+            checkRight(temp, x, y);
+            checkDown(temp, x, y);
+            dfs(cnt+1, temp, cctv);
+
+            temp = copyMap(board);
+            checkDown(temp, x, y);
+            checkLeft(temp, x, y);
+            dfs(cnt+1, temp, cctv);
+        }
+        else if(num==4)
+        {
+            temp = copyMap(board);
+            checkLeft(temp, x, y);
+            checkUp(temp, x, y);
+            checkRight(temp, x, y);
+            dfs(cnt+1, temp, cctv);
+
+            temp = copyMap(board);
+            checkUp(temp, x, y);
+            checkRight(temp, x, y);
+            checkDown(temp, x, y);
+            dfs(cnt+1, temp, cctv);
+
+            temp = copyMap(board);
+            checkRight(temp, x, y);
+            checkDown(temp, x, y);
+            checkLeft(temp ,x , y);
+            dfs(cnt+1, temp, cctv);
+
+            temp = copyMap(board);
+            checkDown(temp, x, y);
+            checkLeft(temp ,x , y);
+            checkUp(temp, x, y);
+            dfs(cnt+1, temp, cctv);
+        }
+        else if(num==5)
+        {
+            temp = copyMap(board);
+            checkRight(temp, x, y);
+            checkDown(temp, x, y);
+            checkLeft(temp ,x , y);
+            checkUp(temp, x, y);
+            dfs(cnt+1, temp, cctv);
+        }
+
+    }
     public static void checkLeft(int[][] map, int x, int y) {
         for(int i=y-1; i>=0; i--) {
             if(map[x][i] == 6) return;
@@ -169,29 +208,80 @@ public class BOJ_감시_15683 {
             map[i][y] = -1;
         }
     }
+//    private static void checkLeft(int[][] temp, int x, int y) {
+//
+//        int nx =x;
+//        int ny= y;
+//        for(int idx=0;idx<M;idx++)
+//        {
+//            ny-=1;
+//            if(!isBoundary(nx,ny) || temp[nx][ny]==6)
+//                break;
+//            temp[nx][ny]=-1;
+//        }
+//    }
+//    private static void checkRight(int[][] temp, int x, int y) {
+//
+//        int nx =x;
+//        int ny= y;
+//        for(int idx=0;idx<M;idx++)
+//        {
+//            ny+=1;
+//            if(!isBoundary(nx,ny) || temp[nx][ny]==6)
+//                break;
+//            temp[nx][ny]=-1;
+//        }
+//    }
+//    private static void checkUp(int[][] temp, int x, int y) {
+//
+//        int nx =x;
+//        int ny= y;
+//        for(int idx=0;idx<N;idx++)
+//        {
+//            nx-=1;
+//            if(!isBoundary(nx,ny) || temp[nx][ny]==6)
+//                break;
+//            temp[nx][ny]=-1;
+//        }
+//    }
+//    private static void checkDown(int[][] temp, int x, int y) {
+//
+//        int nx =x;
+//        int ny= y;
+//        for(int idx=0;idx<M;idx++)
+//        {
+//            nx+=1;
+//            if(!isBoundary(nx,ny) || temp[nx][ny]==6)
+//                break;
+//            temp[nx][ny]=-1;
+//        }
+//    }
+    public static void print()
+    {
+        for(int[]b:board)
+        {
+            System.out.println(Arrays.toString(b));
+        }
+        System.out.println();
+    }
 
-    public static int getZeroCnt(int[][] map) {
-        int zerCnt = 0;
-        for(int i=0; i<N; i++) {
-            for(int j=0; j<M; j++) {
-                if(map[i][j] == 0) zerCnt++;
+    public static boolean isBoundary(int x,int y)
+    {
+        return x>=0 && x<N && y>=0 && y<M;
+    }
+
+    public static int[][] copyMap(int[][] board)
+    {
+        int[][] t= new int[N][M];
+
+        for(int i=0;i<N;i++)
+        {
+            for(int j=0;j<M;j++)
+            {
+                t[i][j]=board[i][j];
             }
         }
-        return zerCnt;
+        return t;
     }
 
-    public static int[][] copyMap(int[][] map) {
-        int[][]tmp = new int[N][M];
-        for(int i=0; i<N; i++) {
-            for(int j=0; j<M; j++) {
-                tmp[i][j] = map[i][j];
-            }
-        }
-        return tmp;
-    }
-
-    public static boolean isIn(int x, int y) {
-        return 0<=x && x<N && 0<=y && y<M;
-    }
 }
-
