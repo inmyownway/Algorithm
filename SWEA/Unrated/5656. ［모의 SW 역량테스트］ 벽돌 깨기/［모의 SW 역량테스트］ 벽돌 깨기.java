@@ -1,25 +1,40 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.StringTokenizer;
 
 public class Solution {
-
-
-    static int N;
-    static int W;
-    static int H;
+    static int N,W,H;
     static int[][] board;
-    static int[] num;
-    static int[] dx= {0,0,-1,1};
-    static int[] dy={1,-1,0,0};
     static int answer;
-    static int[][] saveBoard;
-    static int[] arr;
+    static Queue<Bomb> q;
+    static int answerCnt;
+    static int[][] temp;
+    static boolean[] v;
+    static int[] nums;
+    static class Bomb{
+        int x;
+        int y;
+        int size;
+
+        @Override
+        public String toString() {
+            return "Bomb{" +
+                    "x=" + x +
+                    ", y=" + y +
+                    ", size=" + size +
+                    '}';
+        }
+
+        public Bomb(int x, int y, int size) {
+            this.x = x;
+            this.y = y;
+            this.size = size;
+        }
+    }
     public static void main(String[] args) throws IOException {
 
         BufferedReader bf= new BufferedReader(new InputStreamReader(System.in));
@@ -27,218 +42,186 @@ public class Solution {
 
         int testCase= Integer.parseInt(bf.readLine());
 
-        for(int test=1;test<testCase+1;test++)
+
+
+        for(int t=1;t<testCase+1;t++)
         {
-            st=new StringTokenizer(bf.readLine());
-            N=Integer.parseInt(st.nextToken());
-            W=Integer.parseInt(st.nextToken());
-            H=Integer.parseInt(st.nextToken());
+            st= new StringTokenizer(bf.readLine());
+            N= Integer.parseInt(st.nextToken());
+            W= Integer.parseInt(st.nextToken());
+            H= Integer.parseInt(st.nextToken());
             board= new int[H][W];
+            temp = new int[H][W];
             answer= Integer.MAX_VALUE;
-            saveBoard= new int[H][W];
-            num= new int[W];
-            arr= new int[N];
+            v= new boolean[W];
+            answerCnt=0;
+            nums= new int[N];
+
             for(int i=0;i<H;i++)
             {
                 st= new StringTokenizer(bf.readLine());
                 for(int j=0;j<W;j++)
                 {
-                    board[i][j]=Integer.parseInt(st.nextToken());
-                    saveBoard[i][j]=board[i][j];
+                  temp[i][j]=  board[i][j]=Integer.parseInt(st.nextToken());
                 }
+
             }
-            for(int i=0;i<W;i++)
-            {
-                num[i]=i;
-            }
+
+
+
+            // 0~ W 까지 순열 구하기 ㅓ디 떨어트릴지
+            // 쏘기
+            // 만약 1보다 크면 큐에넣고, 연쇄반응 시작
+
+            // 4방향으로 수만큼 터트릭 큐에 넣기
+
 
             perm(0);
-            System.out.println("#"+test+" "+answer);
+            System.out.println("#"+t+" "+answer);
+
         }
-
-
     }
-    public static void perm(int depth)
+    private static void perm(int depth)
     {
+
+        if(answer==0)
+            return;
         if(depth==N)
         {
-
-            Game(arr);
+        for(int a=0;a<H;a++)
+        {
+            for(int b=0;b<W;b++)
+            {
+                board[a][b]=temp[a][b];
+            }
+        }
+            answerCnt=0;
+            check(nums);
+           // System.out.println(answerCnt);
             return;
         }
 
         for(int i=0;i<W;i++)
-
         {
-
-            arr[depth]=num[i];
+            nums[depth]=i;
             perm(depth+1);
-
         }
 
     }
-
-    private static void Game(int[] number) {
-       // System.out.println("구슬(순열돌린거): "+ Arrays.toString(number));
-
-
-        for(int i=0;i<H;i++)
+    private static void check(int[] marble)
+    {
+        q= new LinkedList<>();
+     //   System.out.println(Arrays.toString(marble));
+        for(int i=0;i<N;i++)
         {
-            for(int j=0;j<W;j++)
+            // 폭탄 쏘는곳
+
+            for(int idx=0;idx<H;idx++)
             {
-                board[i][j]=saveBoard[i][j];
-            }
-        }
-
-
-        for (int n : number) {
-
-            for (int x = 0; x < H; x++)
-            {
-                if (board[x][n]!=0)
+                if (board[idx][marble[i]] != 0)
                 {
-
-                    // System.out.println(x+" "+n);
-                    shooting(x,n);
-                  //  print(board);
+                    q.add(new Bomb(idx,marble[i],board[idx][marble[i]]));
+                    //System.out.println(idx+" "+marble[i]);
+                    crash();
                     break;
                 }
 
+
             }
-            move();
 
+            // 폭탄내리기
+
+//            System.out.println("내린후");
+
+              nextState();
+
+//            for(int[]b:board)
+//            {
+//                System.out.println(Arrays.toString(b));
+//            }
+//            System.out.println();
         }
-   //   print(board);
-
-        // 슈팅 끝, 남아있는거 확인
-        int result=0;
-        for(int i=0;i<H;i++)
+     //   System.out.println(answerCnt);
+       int remainBomb=0;
+        for(int a=0;a<H;a++)
         {
-            for(int j=0;j<W;j++)
+            for(int b=0;b<W;b++)
             {
-                if (board[i][j]>=1)
-                    result++;
+                if(board[a][b]!=0)
+                {
+                    remainBomb++;
+                }
             }
         }
-
-        //System.out.println("남아있는거: "+result);
-        answer=Math.min(answer,result);
+        answer= Math.min(answer,remainBomb);
+        if(answer==0) return;
     }
 
-    private static void move() {
+    private static void nextState() {
 
-        for(int i=H-2;i>-1;i--)
+        for(int j=0;j<W;j++)
         {
-            for(int j=0;j<W;j++)
+            for(int i=H-2;i>-1;i--)
             {
-                if (board[i][j]>=1)
+                if(board[i][j]!=0)
                 {
-                    for(int idx=i;idx<H;idx++)
+                    int num= board[i][j];
+
+                    int idx=1;
+                    while (i+idx<=H-1)
                     {
-
-                        if(idx==H-1)
-                            break;
-                        if (board[idx+1][j]==0)
+                        if(board[i+idx][j]==0)
                         {
-                            board[idx+1][j]=board[idx][j];
-                            board[idx][j]=0;
-
+                            board[i+idx][j]=num;
+                            board[i+idx-1][j]=0;
+                            idx++;
                         }
                         else
                         {
                             break;
                         }
+
                     }
                 }
             }
         }
     }
 
-    private static void shooting(int x,int y) {
+    private static void crash() {
 
-        int[][] tempBoard=new int[H][W];
-        for(int i=0;i<H;i++)
-        {
-            for(int j=0;j<W;j++)
-            {
-                tempBoard[i][j]=board[i][j];
-            }
-        }
-
-        Queue<int[]> q= new LinkedList<>();
-        q.add(new int[]{x,y});
+        int[] dx= {0,0,-1,1};
+        int[] dy={1,-1,0,0};
 
         while(!q.isEmpty())
         {
+            Bomb now = q.poll();
 
-            int s= q.size();
+            board[now.x][now.y]=0;
 
-            for(int si=0;si<s;si++)
+
+            int nx= now.x;
+            int ny= now.y;
+            for(int i=1;i<now.size;i++)
             {
-                int[] now = q.poll();
-                int range= board[now[0]][now[1]];
-                //(range);
-                tempBoard[now[0]][now[1]]=0;
 
-                for(int i=0;i<4;i++)
+                for(int idx=0;idx<4;idx++)
                 {
-                    int nx= now[0];
-                    int ny= now[1];
-
-                    //  System.out.println("bomb: "+ board[nx][ny]);
-                    for(int idx=0;idx<range-1;idx++)
+                    nx= now.x+ dx[idx]*i;
+                    ny= now.y+dy[idx]*i;
+                    if(isBoundary(nx,ny) && board[nx][ny]>=1)
                     {
-                        nx+=dx[i];
-                        ny+=dy[i];
-
-                        //  System.out.println("nx ny "+nx+" "+ny );
-                        if(isBoundary(nx,ny) )
-                        {
-                            if(tempBoard[nx][ny]>=2)
-                            {
-                                q.add(new int[]{nx,ny});
-                            }
-
-                            tempBoard[nx][ny]=0;
-
-                        }
+                        q.add(new Bomb(nx,ny,board[nx][ny]));
+                        answerCnt++;
                     }
                 }
 
             }
-
-
-
-
-        }
-        for(int i=0;i<H;i++)
-        {
-            for(int j=0;j<W;j++)
-            {
-                board[i][j]=tempBoard[i][j];
-            }
         }
     }
-    public static boolean isBoundary(int x,int y)
-    {
-        return x>=0 && x<H && y>=0  && y<W;
-    }
 
-
-    public static void swap(int x,int y)
+    private static boolean isBoundary(int x,int y)
     {
-
-        int temp= num[x];
-        num[x]=num[y];
-        num[y]=temp;
-    }
-    public static void print(int[][] bb)
-    {
-        for(int[] b :bb)
-        {
-            System.out.println(Arrays.toString(b));
-        }
-        System.out.println();
+        return x>=0 && x<H && y>=0 && y<W;
     }
 
 }
