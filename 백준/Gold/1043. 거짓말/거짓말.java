@@ -3,110 +3,72 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
 import java.util.StringTokenizer;
 
 public class Main {
 
-    static int N,M;
-    static ArrayList<Integer> knowTrue;
-    static ArrayList<Integer>[] partys;
-    static boolean[] isVisited;
-    public static void main(String[] args) throws IOException {
+    static int N, M;
+    static Queue<Integer> arr;
+    static ArrayList<Integer>[] party;
+    static boolean[] v;
 
+    public static void main(String[] args) throws IOException {
         BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(bf.readLine());
 
-        N= Integer.parseInt(st.nextToken());
-        M=Integer.parseInt(st.nextToken());
+        N = Integer.parseInt(st.nextToken());
+        M = Integer.parseInt(st.nextToken());
+        arr = new LinkedList<>();
+        v = new boolean[M];
+        st = new StringTokenizer(bf.readLine());
+        int k = Integer.parseInt(st.nextToken());
 
-
-
-        knowTrue= new ArrayList<>();
-        partys=new ArrayList[M];
-        isVisited=new boolean[M];
-
-
-        st= new StringTokenizer(bf.readLine());
-
-        int tn= Integer.parseInt(st.nextToken());
-
-        for(int i=0;i<tn;i++)
-        {
-            knowTrue.add(Integer.parseInt(st.nextToken()));
+        party = new ArrayList[M];
+        for (int i = 0; i < M; i++) {
+            party[i] = new ArrayList<>();
         }
 
-        int idx=0;
-        for(int i=0;i<M;i++)
-        {
-            st=new StringTokenizer(bf.readLine());
-            ArrayList<Integer> temp =new ArrayList<>();
-
-            tn = Integer.parseInt(st.nextToken());
-
-            for(int j=0;j<tn;j++)
-            {
-                temp.add(Integer.parseInt(st.nextToken()));
-            }
-
-            partys[idx++]=temp;
+        for (int i = 0; i < k; i++) {
+            arr.add(Integer.parseInt(st.nextToken()));
         }
 
-
-        while(true)
-        {
-            boolean isEnd =true;
-
-            // 파티 하나당 다 파악
-            ArrayList<Integer> t = new ArrayList<>();
-
-            for(int i=0;i<knowTrue.size();i++)
-            {
-                t.add(knowTrue.get(i));
+        for (int i = 0; i < M; i++) {
+            st = new StringTokenizer(bf.readLine());
+            int n = Integer.parseInt(st.nextToken());
+            for (int j = 0; j < n; j++) {
+                party[i].add(Integer.parseInt(st.nextToken()));
             }
+        }
 
-            for(int i=0;i<M;i++)
-            {
-                ArrayList<Integer> tempParty= partys[i];
-                boolean f= false;
+        while (!arr.isEmpty()) {
+            int now = arr.poll();
 
-                for(int a=0;a<tempParty.size();a++)
-                {
-                    for(int b=0;b<t.size();b++)
-                    {
-                        if(t.get(b) == tempParty.get(a) && !isVisited[i])
-                        {
-                            isEnd=false;
-                            f=true;
+            for (int j = 0; j < party.length; j++) {
+
+                if (!v[j]) {
+                    for (int p = 0; p < party[j].size(); p++) {
+                        if (party[j].get(p) == now) {
+                            v[j] = true;
+
+                            for (int x = 0; x < party[j].size(); x++) {
+                                arr.add(party[j].get(x));
+                            }
                         }
                     }
-
                 }
-
-                if(f)
-                {
-                    isVisited[i]=true;
-
-                    for(int aa=0;aa<tempParty.size();aa++)
-                    {
-                        knowTrue.add(tempParty.get(aa));
-                    }
-                }
-
-            }
-            if(isEnd)
-            {
-               // System.out.println(Arrays.toString(isVisited));
-                break;
             }
         }
-        int answer=0;
-        for(int z=0;z<isVisited.length;z++)
-        {
-            if(isVisited[z]==false)
-            {
-                answer++;
-            }
+
+        int ans = 0;
+
+        for (int i = 0; i < v.length; i++) {
+            if (!v[i])
+                ans++;
         }
-        System.out.println(answer);
+        System.out.println(ans);
     }
 }
