@@ -55,6 +55,8 @@ public class Main {
     }
 
     public static void dfs(Queue<Character> first, Queue<Character> second, int idx) {
+       if(flag)
+           return;
         if (first.isEmpty() && second.isEmpty()) {
             flag = true;
             return;
