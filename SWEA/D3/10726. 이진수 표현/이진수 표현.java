@@ -15,26 +15,16 @@ public class Solution {
             int N = Integer.parseInt(st.nextToken());
             int M = Integer.parseInt(st.nextToken());
 
-            String number = Integer.toBinaryString(M);
-            String checkBit = Integer.toBinaryString((1 << (N - 1)));
+            int c = (1 << N) - 1;
+            //System.out.println(c);
 
-            boolean check = true;
-            if (checkBit.length() > number.length()) {
-                check = false;
-            } else {
-                for (int n = 0; n < N; n++) {
-                    if (number.charAt(number.length() - 1 - n) - '0' != 1) {
-                        check = false;
-                    }
-                }
-            }
-
-            if (check) {
+            if ((M & c) == c) {
                 System.out.println("#" + t + " ON");
             } else {
                 System.out.println("#" + t + " OFF");
             }
-
         }
+
+
     }
 }
