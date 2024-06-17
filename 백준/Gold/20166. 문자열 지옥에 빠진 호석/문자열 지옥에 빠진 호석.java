@@ -37,12 +37,13 @@ public class Main {
             }
         }
         map = new HashMap<>();
-
+        String[] valueSet = new String[K];
         for (int i = 0; i < K; i++) {
             answer = bf.readLine();
 
             map.put(answer, 0);
 
+            valueSet[i] = answer;
             maxLen = Math.max(maxLen, answer.length());
         }
 
@@ -52,9 +53,8 @@ public class Main {
             }
         }
 
-        Collection<Integer> value = map.values();
-        for (Integer v : value) {
-            System.out.println(v);
+        for (int i = 0; i < K; i++) {
+            System.out.println(map.get(valueSet[i]));
         }
     }
 
@@ -87,7 +87,7 @@ public class Main {
     public static int checkX(int x) {
         if (x >= N) {
             return 0;
-        } else if (x == -1) {
+        } else if (x < 0) {
             return N - 1;
         }
 
@@ -97,7 +97,7 @@ public class Main {
     public static int checkY(int x) {
         if (x >= M) {
             return 0;
-        } else if (x == -1) {
+        } else if (x <0) {
             return M - 1;
         }
 
