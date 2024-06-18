@@ -39,8 +39,8 @@ public class Main {
             b[i] = Long.parseLong(st.nextToken());
         }
 
-        List<Long> sumA = new ArrayList<>();
-        List<Long> sumB = new ArrayList<>();
+        ArrayList<Long> sumA = new ArrayList<>();
+       ArrayList<Long> sumB = new ArrayList<>();
 
         for (int i = 0; i < n; i++) {
             long temp = a[i];
