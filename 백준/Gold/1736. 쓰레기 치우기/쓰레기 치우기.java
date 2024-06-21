@@ -57,12 +57,12 @@ public class Main {
             return;
         }
 
-        for (int i = y; i < N; i++) {
-            for (int j = x; j < M; j++) {
+        for (int i = x; i < N; i++) {
+            for (int j = y; j < M; j++) {
                 if (board[i][j] == 1) {
                     board[i][j] = 0;
                     trashCnt--;
-                    clean(j, i);
+                    clean(i,j );
                     return;
 
                 }
