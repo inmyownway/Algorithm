@@ -1,19 +1,51 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.StringTokenizer;
 
 public class Main {
 
     static int N, S, E;
-    static int[][] board;
+    static ArrayList<Board>[] board;
     static int[] A;
     static int[] B;
-    static boolean[][] v;
+    static boolean[] v;
     static long answer;
+    static int[] dist;
+
+    static class Board {
+        int next;
+        int bridge;
+
+        public Board(int next, int bridge) {
+            this.next = next;
+            this.bridge = bridge;
+        }
+
+
+    }
+
+    static class Node implements Comparable<Node> {
+        int index;
+        int cost;
+        int maxBridege;
+
+        public Node(int index, int cost, int maxBridege) {
+            this.index = index;
+            this.cost = cost;
+            this.maxBridege = maxBridege;
+        }
+
+        @Override
+        public int compareTo(Node o) {
+            return this.cost - o.cost;
+        }
+    }
 
     public static void main(String[] args) throws IOException {
 
@@ -24,90 +56,45 @@ public class Main {
         S = Integer.parseInt(st.nextToken()) - 1;
         E = Integer.parseInt(st.nextToken()) - 1;
         answer = Integer.MAX_VALUE;
-        board = new int[N][N];
+
+        board = new ArrayList[N];
+        for (int i = 0; i < N; i++) {
+            board[i] = new ArrayList<>();
+        }
         for (int i = 0; i < N - 1; i++) {
             st = new StringTokenizer(bf.readLine());
-            int x = Integer.parseInt(st.nextToken());
-            int y = Integer.parseInt(st.nextToken());
+            int x = Integer.parseInt(st.nextToken()) - 1;
+            int y = Integer.parseInt(st.nextToken()) - 1;
             int s = Integer.parseInt(st.nextToken());
-            board[x - 1][y - 1] = s;
-            board[y - 1][x - 1] = s;
+
+            board[x].add(new Board(y, s));
+            board[y].add(new Board(x, s));
+
         }
-        A = new int[N];
-        B = new int[N];
-        v = new boolean[N][2];
 
-        Queue<Integer> a = new LinkedList<>();
-        Queue<Integer> b = new LinkedList<>();
+        v = new boolean[N];
 
-        a.add(S);
-        b.add(E);
-        if (S == E) {
-            System.out.println(0);
-            return;
-        }
-        v[S][0] = true;
-        v[E][1] = true;
-        while (!a.isEmpty() || !b.isEmpty()) {
+        PriorityQueue<Node> q = new PriorityQueue<>();
 
-            int nowA = a.poll();
-            int nowB = b.poll();
+        q.add(new Node(S, 0, 0));
+        v[S] = true;
 
-            // A,B확인?
-            if (board[nowA][nowB] != 0) {
-                answer = Long.min(answer, A[nowA] + B[nowB]);
+        while (!q.isEmpty()) {
+
+            Node nowNode = q.poll();
+            if (nowNode.index == E) {
+                System.out.println(nowNode.cost - nowNode.maxBridege);
             }
-            // A부터 돌림
-
-            for (int i = 0; i < N; i++) {
-                if (board[nowA][i] != 0 && !v[i][0]) {
-
-                    v[i][0] = true;
-                    a.add(i);
-                    A[i] = A[nowA] + board[nowA][i];
-
-                    //System.out.println(i + " " + A[i]);
-                    for (int j = 0; j < N; j++) {
-                        if (v[j][1]) {
-                            if (board[i][j] > 0) {
-
-                                answer = Long.min(answer, A[i] + B[j]);
-
-                                // System.out.println(answer);
-                            }
-                        }
-                    }
-
+            for (Board board : board[nowNode.index]) {
+                if (!v[board.next]) {
+                    v[board.next] = true;
+                    q.add(new Node(board.next, nowNode.cost + board.bridge,
+                            Math.max(board.bridge, nowNode.maxBridege)));
                 }
             }
 
-            // B
-
-            for (int i = 0; i < N; i++) {
-                if (board[nowB][i] != 0 && !v[i][1]) {
-
-                    v[i][1] = true;
-                    b.add(i);
-                    B[i] = B[nowB] + board[nowB][i];
-
-                    for (int j = 0; j < N; j++) {
-                        if (v[j][0]) {
-                            if (board[i][j] > 0) {
-                                answer = Long.min(answer, B[i] + A[j]);
-
-                            }
-                        }
-                    }
-
-                }
-            }
-            // System.out.println(Arrays.toString(A));
-            //System.out.println(Arrays.toString(B));
-            //System.out.println();
 
         }
-        System.out.println(answer);
-
 
     }
 }
