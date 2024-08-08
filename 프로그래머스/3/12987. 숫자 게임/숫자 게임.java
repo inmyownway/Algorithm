@@ -1,36 +1,43 @@
 import java.util.*;
 class Solution {
-    public int solution(int[] A, int[] B) {
+    
+    static ArrayList<Integer> arrA;
+    static ArrayList<Integer> arrB;
+    static int sizeA;
+    static int cnt;
+    public int solution(int[] A, int[] B) 
+    {
         int answer = 0;
+
+        arrA= new ArrayList<>();
+        arrB= new ArrayList<>();
         
-        Arrays.sort(A);
-        Queue<Integer> q=new LinkedList<>();
-        int N= A.length;
-        for(int i=N-1;i>-1;i--)
+         
+        for(int i=0;i<A.length;i++)
         {
-            q.add(A[i]);
+           // System.out.println(A[i]);
+            arrA.add(A[i]);
+            arrB.add(B[i]);
         }
+         sizeA=arrA.size();
+        //System.out.println(sizeA);
+        Collections.sort(arrA);
+        Collections.sort(arrB);
         
-        Arrays.sort(B);
-        ArrayDeque<Integer> dq= new ArrayDeque();
-        for(int i=0;i<N;i++)
-        {
-            dq.add(B[i]);
-        }
-        while(!q.isEmpty()){
-            int now= q.poll();
-            
-            if(now < dq.peekLast())
+        for(int i=sizeA-1;i>-1;i--){
+          //  System.out.println(arrA.get(i)+" "+arrB.get(arrB.size()-1));
+            if(arrA.get(i) < arrB.get(arrB.size()-1))
             {
-                dq.pollLast();
-                answer++;
+                cnt++;
+                arrB.remove(arrB.size()-1);
             }
-            else
-            {
-                dq.pollFirst();
+            else{
+                arrB.remove(0);
             }
         }
-        
-        return answer;
+    return cnt;
     }
+
+    
 }
+
