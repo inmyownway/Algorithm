@@ -1,25 +1,62 @@
 class Solution {
     public int solution(int n, int[] stations, int w) {
         int answer = 0;
-
+        
+        
+ 
+        
         int start=1;
-        int idx=0;
-        while(start<=n)
+        
+        for(int idx=0;idx<stations.length;idx++)
         {
+            int currentStations = stations[idx];
+            
+            if(start >= currentStations-w)
+            {
+                start= currentStations+w+1;
+                continue;
+            }
+            else
+            {
+                int d = currentStations-w  - start;
+                
+            
+                if(d % (w*2+1) ==0)
+                {
+                    answer+= d/(w*2+1);                
+                }
+                else{
+                    answer+= d/(w*2+1)+1;
+                }
+            }                
+            start= currentStations+w+1;
 
             
-            if(idx>= stations.length || start < stations[idx]-w)
-            {
-                answer++;
-                start = start+(w*2) +1;
-                
-            }
-            else{
-                
-                start= stations[idx]+w +1;
-                idx++;
-            }
         }
+        if(start <=n)
+        {
+             int d = n  - start;
+                
+            if(d==0)
+            {
+                answer+=1;
+            
+            }
+            else if(d % (w*2+1) ==0)
+                {
+                    answer+= d/(w*2+1);                
+                }
+                else {
+                    answer+= d/(w*2+1)+1;
+                }
+        }
+        
+              
+            
+    
+
+        
         return answer;
+      
     }
 }
