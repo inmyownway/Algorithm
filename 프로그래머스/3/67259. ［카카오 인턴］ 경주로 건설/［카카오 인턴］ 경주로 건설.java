@@ -1,89 +1,68 @@
 import java.util.*;
-
-class Solution {
-    static int[] dx={0,0,-1,1};
-    static int[] dy={1,-1,0,0};
-    static int N,M;
-    static int[][][] price;
-    public int solution(int[][] board) {
  
-        N= board.length;
-        M=board[0].length;
-        price= new int[N][M][4];
-        for(int i=0;i<N;i++){
-            for(int j=0;j<M;j++)
-            {
-                for(int a=0;a<4;a++)
-                {
-            price[i][j][a]=Integer.MAX_VALUE;
-            
-                }}
-        }
-        bfs(board);
-        
-   
-        int answer= Integer.MAX_VALUE;
-        for(int i=0;i<4;i++)
-        {
-            answer=Math.min(answer,price[N-1][M-1][i]);
-        }
-        return answer;
+class Solution {
+    
+    int N;
+    int [][][] visited;
+    int[][] d = {{1,0},{-1,0},{0,1},{0,-1}};
+    
+    public int solution(int[][] board) {
+        N = board.length;
+        visited = new int[N][N][4];
+
+        return bfs(board);
     }
-   
-    public static void bfs(int[][] board)
-    {
-       /// Queue<Integer> q= new LinkedList<>();
-        Queue<int[]> q = new LinkedList<>();
-        q.add(new int[]{0,0,0});
-        
-        for(int i=0;i<4;i++)
-        {
-            price[0][0][i]=0;
-        }
-        
-        while(!q.isEmpty())
-        {
-            int[] now= q.poll();
-            int x=now[0];
-            int y=now[1];
-            for(int idx=0;idx<4;idx++)
-            {
-                int nx =now[0]+dx[idx];
-                int ny= now[1]+dy[idx];
-                if(isBoundary(nx,ny) && board[nx][ny]==0)
-                {
-                    if(now[2]!=idx)
-                    {
-                        if(price[nx][ny][idx] > price[x][y][now[2]]+100+500)
-                        {
-                            if(x==0&&y==0)
-                            {
-                                price[nx][ny][idx]=price[x][y][now[2]]+100;
-                            }else{
-                            price[nx][ny][idx]=price[x][y][now[2]]+500+100;}
-                            q.add(new int[]{nx,ny,idx});
-                        }
-                    }
-                    else{
-                            if(price[nx][ny][idx] > price[x][y][now[2]]+100)
-                        {
-                            if(x==0&&y==0)
-                            {
-                                price[nx][ny][idx]=price[x][y][now[2]]+100;
-                            }else{
-                            price[nx][ny][idx]=price[x][y][now[2]]+100;}
-                            q.add(new int[]{nx,ny,idx});
-                        }
-                    }
+    
+    public int bfs(int[][] board) {
+        int x=0, y=0, direction=-1, cost=0;
+        Queue<Node> q = new LinkedList<>();
+        q.add(new Node(y,x,direction,cost));
+
+        int min_cost = Integer.MAX_VALUE;
+
+        while(!q.isEmpty()) {
+            Node now = q.poll();
+
+            if(now.r == N-1 && now.c == N-1) {
+                min_cost = Math.min(min_cost,now.cost);
+            }
+
+            for(int dir=0; dir<4; dir++) {
+                int dr = now.r + d[dir][0];
+                int dc = now.c + d[dir][1];
+
+                if(dr<0 || dr >= N || dc<0 || dc >= N || board[dr][dc] == 1) {
+                    continue;
+                }
+
+                int nextCost = now.cost;
+                if(now.dir == -1 || now.dir == dir) { 
+                    //처음이라 비교대상이 없는 경우엔 무조건 100원만 추가,
+                    //이전과 같은 방향인 경우에도 100원 추가
+                    nextCost += 100;
+                }
+                else {
+                    nextCost += 600;
+                }
+
+                if(visited[dr][dc][dir] == 0 || board[dr][dc] >= nextCost) {
+                    q.add(new Node(dr,dc,dir,nextCost));
+                    visited[dr][dc][dir] = 1;
+                    board[dr][dc] = nextCost;
                 }
             }
         }
-        
-    }
-    public static boolean isBoundary(int x,int y)
-    {
-        return x>=0 && x<N && y>=0 &&y<N;
+        return min_cost;
     }
 
+    public class Node {
+        int r, c, dir, cost;
 
+        public Node(int r, int c, int dir, int cost) {
+            this.r = r;
+            this.c = c;
+            this.dir = dir;
+            this.cost = cost;
+        }
+    }
 }
