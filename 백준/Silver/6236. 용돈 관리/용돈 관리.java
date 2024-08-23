@@ -1,11 +1,18 @@
 import java.util.*;
 import java.io.*;
 
+// N일동안 M번만 K원 인출
+// 모자라면 나머지금액 넣고 다시 K원 인출
+
+
 public class Main {
     static int N, M;
     static int[] money;
+    static long answer;
 
     public static void main(String[] args) throws IOException {
+        // 코드를 작성해주세요
+
         BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(bf.readLine());
 
@@ -13,42 +20,42 @@ public class Main {
         M = Integer.parseInt(st.nextToken());
         money = new int[N];
 
-        int maxExpense = 0;
-        int totalExpense = 0;
-
+        int left = 0;
+        int right = 0;
         for (int i = 0; i < N; i++) {
             money[i] = Integer.parseInt(bf.readLine());
-            maxExpense = Math.max(maxExpense, money[i]);
-            totalExpense += money[i];
+            left = Math.max(left, money[i]);
+            right += money[i];
         }
-
-        // 이분 탐색을 위해 초기화
-        int left = maxExpense;  // 최소 인출 금액은 하루에 필요한 최대 금액이어야 함
-        int right = totalExpense;  // 최대 인출 금액은 모든 금액을 한 번에 인출하는 경우
 
         while (left <= right) {
+
             int K = (left + right) / 2;
 
-            // K로 인출할 때 필요한 인출 횟수를 계산
-            int count = 1;
-            int currentAmount = K;
+            long now = K;
+            int cnt = 1;
 
+            boolean exceed = false;
             for (int i = 0; i < N; i++) {
-                if (currentAmount < money[i]) {
-                    count++;
-                    currentAmount = K;
+                if (now < money[i]) {
+
+                    cnt++;
+                    now = K;
                 }
-                currentAmount -= money[i];
+                now -= money[i];
             }
 
-            if (count <= M) {
-                right = K - 1;  // 가능한 K의 범위를 줄이기 위해 상한을 낮춤
+            if (cnt <= M) {
+                right = K - 1;
+
             } else {
-                left = K + 1;  // 인출 횟수가 너무 많다면 K를 늘려야 함
+                left = K + 1;
             }
-        }
 
-        // 최종적으로 left는 최소 인출 금액을 가리킴
+
+        }
         System.out.println(left);
+
+
     }
 }
