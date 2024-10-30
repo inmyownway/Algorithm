@@ -1,6 +1,5 @@
-# 1
-select e1.id,count(e2.id) as CHILD_COUNT
-from ecoli_data e1
-left join ecoli_data e2 on e1.id = e2.parent_id
-group by e1.id
-order by e1.id 
+-- 코드를 작성해주세요
+
+select id,ifnull((select count(*) from ecoli_data group by parent_id having parent_id = id),0) as child_count
+from ecoli_data
+order by id
