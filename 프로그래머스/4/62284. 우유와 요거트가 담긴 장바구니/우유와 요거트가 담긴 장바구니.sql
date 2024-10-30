@@ -1,5 +1,7 @@
--- #1 
-SELECT distinct(a.cart_id) from cart_products a
- join cart_products b on a.cart_id = b.cart_id
-where a.name ='Milk' and b.name = 'Yogurt'
-order by a.cart_id
+with cte as (
+select distinct cart_id,name from cart_products where name="Yogurt"
+union all
+select distinct cart_id,name from cart_products where name="Milk")
+
+select cart_id from cte group by cart_id
+having count(*)=2
