@@ -1,5 +1,5 @@
-#1
-SELECT a.product_id,a.product_name,sum(a.price * b.amount) as total_sales
-from food_product a join ( select * from food_order where produce_date >= '2022-05-01' and produce_date <= '2022-05-31') b on a.product_id = b.product_id
-group by a.product_id
-order by total_sales desc, product_id asc
+select o.product_id,p.product_name,sum(o.amount)*p.price as total_sales
+from food_order o join food_product p on o.product_id = p.product_id
+where o.PRODUCE_DATE like '2022-05%'
+group by o.product_id
+order by total_sales desc,o.product_id asc
