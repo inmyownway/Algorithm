@@ -1,52 +1,56 @@
 import java.util.*;
-
-class Solution {    
-    public static int check(String str1,String str2)
-    {   
-        int differentCnt=0;
-        for(int i=0;i<str1.length();i++)
-        {
-            if(str1.charAt(i)!=str2.charAt(i))
-            {
-                differentCnt++;
-            }
-        }
-      return differentCnt;
-    }
+class Solution {
     static boolean[] v;
+    static int N;
+    static int answer;
+    static String tar;
     public int solution(String begin, String target, String[] words) {
-        int answer = 0;
+         answer = Integer.MAX_VALUE;
+        System.out.println(answer);
+        N= words.length;
         v= new boolean[words.length];
-        
-        Queue<String[]> q= new LinkedList<>();
-        q.add(new String[]{begin,"0"});
-        
-        while(!q.isEmpty())
+        tar= target;
+        dfs(begin,words,0);
+        if(answer==Integer.MAX_VALUE)
         {
-            String[] now= q.poll();
-            String current = now[0];
-                int cnt= Integer.parseInt(now[1]);
-            if(current.equals(target))
+return 0;}
+        return answer;
+    }
+    public static void dfs(String word ,String[] words,int cnt)
+    {
+        //System.out.println(word);
+        if(word.equals(tar))
+        {
+          //  System.out.println("@: "+answer+" "+cnt);
+            answer=Math.min(answer,cnt);
+           // System.out.println(answer);
+            return;
+        }
+        for(int i=0;i<N;i++)
+        {
+            if(!v[i] && check(word,words[i]))
             {
-                answer=cnt;
-                break;
-            }
-  
-            for(int i=0;i<words.length;i++)
-            {       
-                String str= words[i];
-                if(!v[i] && check(current,str)==1)
-                {
-                    v[i]=true;
-                    cnt++;
-                    q.add(new String[]{str,String.valueOf(cnt)});
-                    
-                
-                }
+               // System.out.println("t: "+words[i]);
+                v[i]=true;
+                dfs(words[i],words,cnt+1);
+                v[i]=false;
             }
         }
-        return answer;
-    
     }
-
+    public static boolean check(String a,String b)
+    {
+        int cnt=0;
+        for(int i=0;i<a.length();i++)
+        {
+            if(a.charAt(i)!=b.charAt(i))
+            {
+                cnt++;
+            }
+        }
+        if(cnt==1)
+        {
+            return true;
+        }
+        return false;
+    }
 }
