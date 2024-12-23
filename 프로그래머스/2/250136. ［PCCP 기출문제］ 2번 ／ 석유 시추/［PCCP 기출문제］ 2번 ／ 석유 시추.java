@@ -1,63 +1,98 @@
 import java.util.*;
-
+import java.io.*;
 class Solution {
-    int[][] ds = {{0,1}, {1,0}, {-1,0}, {0,-1}};
-    Map<Integer, Integer> volumes = new HashMap<>();
-    int H, W;
-    Queue<int[]> q = new LinkedList<>();
-    int[][] map;
+    static int N,M;
+    static int[] dx={0,0,-1,1};
+    static int[] dy={1,-1,0,0};
+    
+    static boolean[][] v;
+    static int label;
+    static ArrayList<Integer> arr;
+    static Map<Integer,Integer> hs;
+    static int[][] map;
+    
     public int solution(int[][] land) {
         int answer = 0;
-        H = land.length;
-        W = land[0].length;
-        map = land;
+        N= land.length;
+        M= land[0].length;
+        map= land;
+        label=2;
+        arr= new ArrayList<>();
+        hs = new HashMap<>();
         
-        int label = 2;
-        for (int i = 0; i < H; i++) {
-            for (int j = 0; j < W; j++) {
-                if (map[i][j] != 1) continue;
-                int size = bfs(i, j, label);
-                volumes.put(label++, size);
+        
+        for(int i=0;i<N;i++)
+        {
+            for(int j=0;j<M;j++)    
+            {
+            
+                if(map[i][j] !=1) continue;
+                int c = check(i,j);
+                hs.put(label++,c);
             }
         }
+     
         
-        Set<Integer> set = new HashSet<>();
-        for (int j = 0; j < W; j++) {
-            for (int i = 0; i < H; i++) {
-                if (map[i][j] == 0) continue;
-                set.add(map[i][j]);
+        Set<Integer> set= new HashSet<>();
+        
+        for(int i=0;i<M;i++)
+        {
+            for(int j=0;j<N;j++)
+            {
+                if(map[j][i]!=0)
+                {
+                    set.add(map[j][i]);
+                }
             }
             
-            int currCnt = 0;
-            for (Integer l : set) {
-                currCnt += volumes.get(l);
+            int currentNum=0;
+            for(int num: set)
+            {
+                currentNum+=hs.get(num);
             }
+            answer= Math.max(currentNum,answer);
             set.clear();
-            
-            answer = Math.max(answer, currCnt);
         }
-        
+    
         return answer;
     }
-    
-    private int bfs(int startR, int startC, int label) {
-        int size = 1;
-        map[startR][startC] = label;
-        q.add(new int[]{ startR, startC });
+    public static int check(int a,int b)
+    {
         
-        while(!q.isEmpty()) {
-            int[] curr = q.poll();
-            for (int d = 0; d < 4; d++) {
-                int nr = curr[0] + ds[d][0];
-                int nc = curr[1] + ds[d][1];
+              
+        int cnt=1;
+        map[a][b]=label;
+        
+        Queue<int[]> q= new LinkedList<>();
+        q.add(new int[]{a,b});
+
+  
+        while(!q.isEmpty())
+        {
+            int[] now= q.poll();
+            
+             int x= now[0];
+             int y= now[1];
+            
+            for(int idx=0;idx<4;idx++){
+                int nx= x+dx[idx];
+                int ny= y+dy[idx];
                 
-                if (nr < 0 || nr >= H || nc < 0 || nc >= W || map[nr][nc] != 1) continue;
-                map[nr][nc] = label;
-                size++;
-                q.add(new int[]{nr, nc});
+                if(isBoundary(nx,ny)  && map[nx][ny]==1)
+                {
+                    q.add(new int[]{nx,ny});
+                    
+                    map[nx][ny]=label;
+                    cnt++;
+                }
             }
+                
         }
+        return cnt;
         
-        return size;
+    }
+    public static boolean isBoundary(int x,int y)
+    {
+        return x>=0 && x<N && y>=0 && y<M;
     }
 }
