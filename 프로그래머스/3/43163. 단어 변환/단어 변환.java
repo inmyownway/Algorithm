@@ -1,53 +1,71 @@
 import java.util.*;
+
 class Solution {
     static boolean[] v;
-    static int N;
+    static int[] num;
+    static String t;
     static int answer;
-    static String tar;
+    static int N;
     public int solution(String begin, String target, String[] words) {
-         answer = Integer.MAX_VALUE;
-        System.out.println(answer);
-        N= words.length;
+
+        
         v= new boolean[words.length];
-        tar= target;
-        dfs(begin,words,0);
-        if(answer==Integer.MAX_VALUE)
-        {
-return 0;}
+        num= new int[words.length];
+        t= target;
+            N= words.length;
+        dfs(begin,0,words);
+
         return answer;
     }
-    public static void dfs(String word ,String[] words,int cnt)
-    {
-        //System.out.println(word);
-        if(word.equals(tar))
+    public static void dfs(String word,int n,String[] words)
+    {   
+       // System.out.println("current:  "+word);
+        if(word.equals(t))
         {
-          //  System.out.println("@: "+answer+" "+cnt);
-            answer=Math.min(answer,cnt);
-           // System.out.println(answer);
+         //  System.out.println("return");
+            answer=n;
             return;
         }
+
         for(int i=0;i<N;i++)
-        {
-            if(!v[i] && check(word,words[i]))
+        {      
+            
+            if(isOk(word,words[i]))
             {
-               // System.out.println("t: "+words[i]);
-                v[i]=true;
-                dfs(words[i],words,cnt+1);
-                v[i]=false;
+                
+                if(!v[i])
+                {
+                   // System.out.println(words[i]);
+                    num[i]=n+1;
+                      v[i]=true;
+                  dfs(words[i],n+1,words);
+                  
+                }
+                else if(v[i] && num[i] > n+1)
+                {
+                     // System.out.println(words[i]);
+                    num[i]=n+1;
+                    dfs(words[i],n+1,words);
+                    
+                }
             }
         }
     }
-    public static boolean check(String a,String b)
+    public static boolean isOk(String a,String b)
     {
-        int cnt=0;
+        //System.out.println(a+"   "+b);
+        
+        int c=0;
+        
         for(int i=0;i<a.length();i++)
         {
-            if(a.charAt(i)!=b.charAt(i))
+            if(a.charAt(i) != b.charAt(i))
             {
-                cnt++;
+                c++;
             }
         }
-        if(cnt==1)
+        //System.out.println(c);
+        if(c==1)
         {
             return true;
         }
