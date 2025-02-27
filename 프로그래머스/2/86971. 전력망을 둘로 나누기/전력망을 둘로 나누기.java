@@ -1,94 +1,64 @@
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.SortedMap;
+import java.util.*;
+
 class Solution {
-    static int[][] board;
-    static int answer=Integer.MAX_VALUE;
+    static int answer = Integer.MAX_VALUE;
+    static int[] parents;
     static int N;
-    public static int solution(int n, int[][] wires) {
 
-        N=wires.length;
-        System.out.println(N);
+    public int solution(int n, int[][] wires) {
+        N = n;
+        for (int i = 0; i < wires.length; i++) {
+            // 부모 배열 초기화
+            parents = new int[N];
+            makeParents();
 
-        for(int i=0;i<N;i++)
-        {
-            board= new int[n][n];
-           // System.out.println(i+" 빼고 연결하기");
-            for(int idx=0;idx<N;idx++)
-            {
-                if(i!=idx)
-                {
-
-                    //      System.out.println(idx);
-                    int[] t= wires[idx];
-                  //  System.out.println(Arrays.toString(t));
-                    board[t[0]-1][t[1]-1]=1;
-                    board[t[1]-1][t[0]-1]=1;
-
-                }
-
-
+            // 모든 간선을 연결하되, 하나를 제외하고 연결
+            for (int j = 0; j < wires.length; j++) {
+                if (i == j) continue; // i번째 간선은 끊음
+                int a = wires[j][0] - 1;
+                int b = wires[j][1] - 1;
+                union(a, b);
             }
-//            for(int[] b:board)
-//            {
-//                System.out.println(Arrays.toString(b));
-//
-//            }
-//
-//            System.out.println();
 
-
-            graph(i);
-
-        }
-       // System.out.println(answer);
-return answer;
-
-    }
-    public static void graph(int d)
-    {
-
-        int n = board.length;
-        boolean[] v= new boolean[n];
-
-        ArrayList<Integer> arr =new ArrayList<>();
-
-
-        for(int i=0;i<n;i++)
-        {
-
-            if(!v[i])
-            { //System.out.println("i "+i);
-                int cnt=1;
-
-                Queue<Integer> q= new LinkedList<>();
-                q.add(i);
-                v[i]=true;
-
-
-                while(!q.isEmpty())
-                {
-                    int current= q.poll();
-                    for(int idx=0;idx<n;idx++)
-                    {
-                        int num = board[current][idx];
-                 //       System.out.println(num);
-                        if(num==1 && !v[idx] )
-                        {
-                            q.add(idx);
-                            v[idx]=true;
-                            cnt++;
-                        }
-                    }
-                }
-arr.add(cnt);
+            // 두 네트워크의 크기 계산
+            int[] count = new int[N]; // 각 그룹의 노드 개수 저장
+            for (int k = 0; k < N; k++) {
+                int root = find(k);
+                count[root]++;
             }
-        }
-      //  System.out.println(arr);
-        answer=Integer.min(answer,Math.abs(arr.get(0)-arr.get(1)));// - Math.abs(arr.get(1)));
 
+            // 두 네트워크의 차이를 계산
+            int sizeA = 0, sizeB = 0;
+            for (int c : count) {
+                if (c > 0) {
+                    if (sizeA == 0) sizeA = c;
+                    else sizeB = c;
+                }
+            }
+
+            answer = Math.min(answer, Math.abs(sizeA - sizeB));
+        }
+        return answer;
     }
 
+    public static void union(int a, int b) {
+        int A = find(a);
+        int B = find(b);
+        if (A != B) {
+            parents[B] = A; // 루트끼리 연결
+        }
+    }
+
+    public static int find(int x) {
+        if (x == parents[x]) {
+            return x;
+        }
+        return parents[x] = find(parents[x]); // 경로 압축 적용
+    }
+
+    public static void makeParents() {
+        for (int i = 0; i < N; i++) {
+            parents[i] = i;
+        }
+    }
 }
