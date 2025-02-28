@@ -1,43 +1,50 @@
 import java.util.*;
+
 class Solution {
-    
-    static ArrayList<Integer> arrA;
-    static ArrayList<Integer> arrB;
-    static int sizeA;
-    static int cnt;
-    public int solution(int[] A, int[] B) 
-    {
-        int answer = 0;
-
-        arrA= new ArrayList<>();
-        arrB= new ArrayList<>();
+    static int answer;
+    public int solution(int[] A, int[] B) {
+        answer = 0;
         
-         
-        for(int i=0;i<A.length;i++)
+        
+        Arrays.sort(A);
+        Arrays.sort(B);
+        
+        Queue<Integer> q = new LinkedList<>();
+        
+        for(int i=B.length-1;i>=0;i--)
         {
-           // System.out.println(A[i]);
-            arrA.add(A[i]);
-            arrB.add(B[i]);
+            q.add(B[i]);
         }
-         sizeA=arrA.size();
-        //System.out.println(sizeA);
-        Collections.sort(arrA);
-        Collections.sort(arrB);
         
-        for(int i=sizeA-1;i>-1;i--){
-          //  System.out.println(arrA.get(i)+" "+arrB.get(arrB.size()-1));
-            if(arrA.get(i) < arrB.get(arrB.size()-1))
+        int idx= A.length-1;
+        while(!q.isEmpty())
+        {
+            
+            int nowQ= q.peek();
+            //System.out.println("A: "+A[idx]+" B: "+nowQ);
+            if(A[idx] < nowQ)
             {
-                cnt++;
-                arrB.remove(arrB.size()-1);
+                answer++;
+                idx--;
+                q.poll();
             }
-            else{
-                arrB.remove(0);
+            else if(A[idx]==nowQ)
+            {
+                idx--;
+                
             }
+            else if(A[idx]>nowQ)
+            {
+                idx--;
+            }
+            
+            if(idx==-1)
+            {
+                break;
+            }
+            
         }
-    return cnt;
+        
+        return answer;
     }
-
-    
 }
-
